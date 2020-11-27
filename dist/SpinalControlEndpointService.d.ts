@@ -1,0 +1,60 @@
+import { Model } from "spinal-core-connectorjs_type";
+import { IControlEndpoint } from "./interfaces/ControlEndpoint";
+export declare class SpinalControlEndpointService {
+    CONTROL_POINT_TYPE: string;
+    CONTROL_GROUP_TYPE: string;
+    CONTROL_GROUP_TO_CONTROLPOINTS: string;
+    ROOM_TO_CONTROL_GROUP: string;
+    constructor();
+    createContext(contextName: string): Promise<typeof Model>;
+    getContexts(): Promise<Array<typeof Model>>;
+    isControlPointContext(id: string): boolean;
+    createCategory(contextId: string, categoryName: string, iconName: string): Promise<typeof Model>;
+    getCategories(nodeId: string): Promise<Array<typeof Model>>;
+    createGroup(contextId: string, categoryId: string, groupName: string, groupColor: string): Promise<typeof Model>;
+    getGroups(nodeId: string): Promise<Array<typeof Model>>;
+    isControlPointGroup(id: string): boolean;
+    createControlPointProfil(contextId: string, groupId: string, controlPointProfil?: {
+        name: string;
+        endpoints: Array<IControlEndpoint>;
+    }): Promise<any>;
+    getControlPoint(groupId: string): Promise<Array<typeof Model>>;
+    getControlPointProfil(contextId: string, controlPointId: string): Promise<{
+        name: string;
+        endpoints: any;
+    }>;
+    linkControlPointToRooms(roomNodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>>;
+    editControlPointProfil(contextId: string, controlPointId: string, values: Array<IControlEndpoint>): Promise<{
+        name: string;
+        endpoints: any;
+    }>;
+    getElementLinked(controlProfilId: string): Promise<Array<typeof Model>>;
+    getDataFormated(groupId: string): Promise<any>;
+    getReferencesLinked(roomId: string, profilId: string): Promise<any>;
+    getEndpointsLinked(roomId: string, profilId: string): Promise<Array<any>>;
+    getEndpointsNodeLinked(roomId: string, profilId: string): Promise<Array<any>>;
+    private getAllRooms;
+    private createNode;
+    private linkEndpointToProfil;
+    private createEndpointNode;
+    private getCurrentValue;
+    private saveItemLinked;
+    private loadElementLinked;
+    private isLinked;
+    private getContextId;
+    private formatRooms;
+    private controlPointProfilIsAlreadyLinked;
+    private getDifference;
+    private isUpdated;
+    private objectsAreEquals;
+    private configAreEquals;
+    private getAllProfils;
+    private getProfilEndpoints;
+    private create;
+    private update;
+    private delete;
+    private getEndpointByType;
+    private getIndex;
+    private setProfilValue;
+    private modEndpoint;
+}
