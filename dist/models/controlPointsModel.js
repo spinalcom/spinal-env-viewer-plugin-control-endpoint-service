@@ -24,7 +24,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
-const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
+const ControlEndpointType_1 = require("../dataTypes/ControlEndpointType");
 const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
 const config_1 = require("./config");
 exports.ControlPointObj = Object.freeze({
@@ -33,10 +33,11 @@ exports.ControlPointObj = Object.freeze({
     path: "",
     unit: "",
     dataType: ControlEndpointDataType_1.ControlEndpointDataType.Float,
-    type: spinal_model_bmsnetwork_1.InputDataEndpointType.Temperature,
-    command: false,
-    saveTimeSeries: false,
-    config: config_1.getConfig(ControlEndpointDataType_1.ControlEndpointDataType.Float)
+    type: ControlEndpointType_1.ControlEndpointType.Temperature,
+    command: 0,
+    saveTimeSeries: 0,
+    config: config_1.getConfig(ControlEndpointDataType_1.ControlEndpointDataType.Float),
+    icon: "device_thermostat"
 });
 class SpinalControlPoint extends spinal_core_connectorjs_type_1.Model {
     constructor(controlPoint) {

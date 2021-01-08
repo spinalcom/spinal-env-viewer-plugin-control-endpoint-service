@@ -23,8 +23,8 @@
  */
 
 import { Model, spinalCore } from "spinal-core-connectorjs_type"
-import { InputDataEndpointType } from "spinal-model-bmsnetwork";
-import { ControlEndpointDataType } from "../dataTypes/ControlEndpointDataType";
+import { ControlEndpointType } from "../dataTypes/ControlEndpointType";
+import { ControlEndpointDataType } from '../dataTypes/ControlEndpointDataType'
 import { IControlEndpoint } from "../interfaces/ControlEndpoint";
 import { getConfig } from "./config";
 
@@ -34,10 +34,11 @@ export const ControlPointObj: IControlEndpoint = Object.freeze({
     path: "",
     unit: "",
     dataType: ControlEndpointDataType.Float,
-    type: InputDataEndpointType.Temperature,
-    command: false,
-    saveTimeSeries: false,
-    config: getConfig(ControlEndpointDataType.Float)
+    type: ControlEndpointType.Temperature,
+    command: 0,
+    saveTimeSeries: 0,
+    config: getConfig(ControlEndpointDataType.Float),
+    icon: "device_thermostat"
 })
 
 export class SpinalControlPoint extends Model {
