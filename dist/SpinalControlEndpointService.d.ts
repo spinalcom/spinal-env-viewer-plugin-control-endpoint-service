@@ -57,4 +57,6 @@ export declare class SpinalControlEndpointService {
     private getIndex;
     private setProfilValue;
     private modEndpoint;
+    private listenLinkItemToGroupEvent;
+    private listenUnLinkItemToGroupEvent;
 }

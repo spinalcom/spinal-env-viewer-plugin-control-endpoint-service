@@ -25,11 +25,13 @@
 import { Lst, Model, Ptr } from "spinal-core-connectorjs_type";
 import { SpinalGraphService, SPINAL_RELATION_PTR_LST_TYPE } from "spinal-env-viewer-graph-service";
 import { groupManagerService } from 'spinal-env-viewer-plugin-group-manager-service'
+
 import { IControlEndpoint } from "./interfaces/ControlEndpoint";
 import geographicService from 'spinal-env-viewer-context-geographic-service'
 import NetworkService, { SpinalBmsEndpoint, SpinalBmsEndpointGroup } from "spinal-model-bmsnetwork";
 import { ControlEndpointDataType, ControlEndpointType } from ".";
 
+import { spinalEventEmitter } from "spinal-env-viewer-plugin-event-emitter";
 
 const netWorkService = new NetworkService();
 
@@ -39,7 +41,10 @@ export class SpinalControlEndpointService {
     public CONTROL_GROUP_TO_CONTROLPOINTS: string = "hasControlGroup";
     public ROOM_TO_CONTROL_GROUP: string = "hasControlPoints";
 
-    constructor() { }
+    constructor() {
+        this.listenLinkItemToGroupEvent();
+        this.listenUnLinkItemToGroupEvent();
+    }
 
     public createContext(contextName: string): Promise<typeof Model> {
         return groupManagerService.createGroupContext(contextName, this.CONTROL_POINT_TYPE).then((context) => {
@@ -410,7 +415,10 @@ export class SpinalControlEndpointService {
     private getContextId(nodeId: string) {
         const realNode = SpinalGraphService.getRealNode(nodeId);
         if (realNode.contextIds) {
-            return realNode.contextIds._attribute_names[0];
+            const contextIds = realNode.contextIds.values();
+            return contextIds.find(id => {
+                return this.isControlPointContext(id);
+            })
         }
     }
 
@@ -625,4 +633,47 @@ export class SpinalControlEndpointService {
         realNode.info.name.set(newProfil.name);
 
     }
+
+    /////////////////////////////////////////////////////////////
+    //                      Event listener                     //
+    /////////////////////////////////////////////////////////////
+
+
+
+    private listenLinkItemToGroupEvent() {
+        spinalEventEmitter.on(groupManagerService.constants.ELEMENT_LINKED_TO_GROUP_EVENT, async (data) => {
+            const profilsLinked: any = await this.getElementLinked(data.groupId);
+
+            const promises = profilsLinked.map(async (profilModel) => {
+                const profil = profilModel.get();
+                const controlPointContextId = this.getContextId(profil.id);
+                const controlPoints = await this.getControlPointProfil(controlPointContextId, profil.id);
+                const nodeId = await this.createNode(controlPoints.name, controlPointContextId, profil.id, controlPoints.endpoints.get());
+                return SpinalGraphService.addChildInContext(data.elementId, nodeId, controlPointContextId, this.ROOM_TO_CONTROL_GROUP, SPINAL_RELATION_PTR_LST_TYPE)
+            })
+
+            return Promise.all(promises);
+        })
+    }
+
+    private listenUnLinkItemToGroupEvent() {
+        spinalEventEmitter.on(groupManagerService.constants.ELEMENT_UNLINKED_TO_GROUP_EVENT, async (data) => {
+            const profilsLinkedModel = await this.getElementLinked(data.groupId);
+            const elementProfilsModel = SpinalGraphService.getChildren(data.elementId, [this.ROOM_TO_CONTROL_GROUP]);
+
+            const profilsLinked = profilsLinkedModel.map((el: any) => el.get());
+            const elementProfils = (await elementProfilsModel).map(el => el.get());
+
+            const promises = elementProfils.map((profil) => {
+                const found = profilsLinked.find(el => el.id === profil.referenceId);
+                if (found) {
+                    return SpinalGraphService.removeChild(data.elementId, profil.id, this.ROOM_TO_CONTROL_GROUP, SPINAL_RELATION_PTR_LST_TYPE);
+                }
+                return Promise.resolve(false);
+            })
+
+            return Promise.all(promises);
+        })
+    }
+
 }

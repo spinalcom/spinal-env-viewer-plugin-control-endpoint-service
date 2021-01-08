@@ -38,6 +38,7 @@ const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-vie
 const spinal_env_viewer_context_geographic_service_1 = require("spinal-env-viewer-context-geographic-service");
 const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
 const _1 = require(".");
+const spinal_env_viewer_plugin_event_emitter_1 = require("spinal-env-viewer-plugin-event-emitter");
 const netWorkService = new spinal_model_bmsnetwork_1.default();
 class SpinalControlEndpointService {
     constructor() {
@@ -45,6 +46,8 @@ class SpinalControlEndpointService {
         this.CONTROL_GROUP_TYPE = "CONTROL_GROUP";
         this.CONTROL_GROUP_TO_CONTROLPOINTS = "hasControlGroup";
         this.ROOM_TO_CONTROL_GROUP = "hasControlPoints";
+        this.listenLinkItemToGroupEvent();
+        this.listenUnLinkItemToGroupEvent();
     }
     createContext(contextName) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.createGroupContext(contextName, this.CONTROL_POINT_TYPE).then((context) => {
@@ -350,7 +353,10 @@ class SpinalControlEndpointService {
     getContextId(nodeId) {
         const realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(nodeId);
         if (realNode.contextIds) {
-            return realNode.contextIds._attribute_names[0];
+            const contextIds = realNode.contextIds.values();
+            return contextIds.find(id => {
+                return this.isControlPointContext(id);
+            });
         }
     }
     formatRooms(profilId, rooms) {
@@ -533,6 +539,38 @@ class SpinalControlEndpointService {
             }
             realNode.info.name.set(newProfil.name);
         });
+    }
+    /////////////////////////////////////////////////////////////
+    //                      Event listener                     //
+    /////////////////////////////////////////////////////////////
+    listenLinkItemToGroupEvent() {
+        spinal_env_viewer_plugin_event_emitter_1.spinalEventEmitter.on(spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.constants.ELEMENT_LINKED_TO_GROUP_EVENT, (data) => __awaiter(this, void 0, void 0, function* () {
+            const profilsLinked = yield this.getElementLinked(data.groupId);
+            const promises = profilsLinked.map((profilModel) => __awaiter(this, void 0, void 0, function* () {
+                const profil = profilModel.get();
+                const controlPointContextId = this.getContextId(profil.id);
+                const controlPoints = yield this.getControlPointProfil(controlPointContextId, profil.id);
+                const nodeId = yield this.createNode(controlPoints.name, controlPointContextId, profil.id, controlPoints.endpoints.get());
+                return spinal_env_viewer_graph_service_1.SpinalGraphService.addChildInContext(data.elementId, nodeId, controlPointContextId, this.ROOM_TO_CONTROL_GROUP, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE);
+            }));
+            return Promise.all(promises);
+        }));
+    }
+    listenUnLinkItemToGroupEvent() {
+        spinal_env_viewer_plugin_event_emitter_1.spinalEventEmitter.on(spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.constants.ELEMENT_UNLINKED_TO_GROUP_EVENT, (data) => __awaiter(this, void 0, void 0, function* () {
+            const profilsLinkedModel = yield this.getElementLinked(data.groupId);
+            const elementProfilsModel = spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(data.elementId, [this.ROOM_TO_CONTROL_GROUP]);
+            const profilsLinked = profilsLinkedModel.map((el) => el.get());
+            const elementProfils = (yield elementProfilsModel).map(el => el.get());
+            const promises = elementProfils.map((profil) => {
+                const found = profilsLinked.find(el => el.id === profil.referenceId);
+                if (found) {
+                    return spinal_env_viewer_graph_service_1.SpinalGraphService.removeChild(data.elementId, profil.id, this.ROOM_TO_CONTROL_GROUP, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE);
+                }
+                return Promise.resolve(false);
+            });
+            return Promise.all(promises);
+        }));
     }
 }
 exports.SpinalControlEndpointService = SpinalControlEndpointService;

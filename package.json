@@ -16,6 +16,7 @@
     "spinal-env-viewer-plugin-documentation-service": "git+https://github.com/spinalcom/spinal-env-viewer-plugin-documentation-service.git",
     "spinal-model-bmsnetwork": "git+https://github.com/spinalcom/spinal-model-bmsnetwork.git",
     "spinal-env-viewer-plugin-group-manager-service": "git+https://github.com/spinalcom/spinal-env-viewer-plugin-group-manager-service.git",
+    "spinal-env-viewer-plugin-event-emitter" : "git+https://github.com/spinalcom/spinal-env-viewer-plugin-event-emitter.git",
     "moment": "^2.27.0"
   },
   "keywords": [],
