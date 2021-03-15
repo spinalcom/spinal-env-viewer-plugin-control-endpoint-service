@@ -35,7 +35,15 @@ import { spinalEventEmitter } from "spinal-env-viewer-plugin-event-emitter";
 
 const netWorkService = new NetworkService();
 
+/**
+ * @class SpinalControlEndpointService
+ *  @property {string} CONTROL_POINT_TYPE - typeof control point node
+ *  @property {string} CONTROL_GROUP_TYPE  - typeof control point group node
+ *  @property {string} CONTROL_GROUP_TO_CONTROLPOINTS  - relation between control point group and control point
+ *  @property {string} ROOM_TO_CONTROL_GROUP - Relation between room and control point group
+ */
 export class SpinalControlEndpointService {
+
     public CONTROL_POINT_TYPE: string = "SpinalControlPoint";
     public CONTROL_GROUP_TYPE: string = "CONTROL_GROUP";
     public CONTROL_GROUP_TO_CONTROLPOINTS: string = "hasControlGroup";
@@ -46,6 +54,12 @@ export class SpinalControlEndpointService {
         this.listenUnLinkItemToGroupEvent();
     }
 
+
+    /**
+     * This method creates a context of control Endpoint
+     * @param  {string} contextName - The context of heatmap Name
+     * @returns Promise of node info
+     */
     public createContext(contextName: string): Promise<typeof Model> {
         return groupManagerService.createGroupContext(contextName, this.CONTROL_POINT_TYPE).then((context) => {
             const contextId = context.getId().get();
@@ -53,12 +67,23 @@ export class SpinalControlEndpointService {
         })
     }
 
+
+    /**
+     * retrieves and returns all contexts of control Endpoint
+     * @returns Promise of the info list of all contexts
+     */
     public getContexts(): Promise<Array<typeof Model>> {
         return groupManagerService.getGroupContexts(this.CONTROL_POINT_TYPE).then((contexts) => {
             return contexts.map(el => SpinalGraphService.getInfo(el.id));
         })
     }
 
+
+    /**
+     * checks if the id passed in parameter is a context of control Endpoint
+     * @param  {string} id
+     * @returns boolean
+     */
     public isControlPointContext(id: string): boolean {
         const info = SpinalGraphService.getInfo(id);
         const type = info.type.get();
@@ -66,6 +91,14 @@ export class SpinalControlEndpointService {
         return type === `${this.CONTROL_POINT_TYPE}GroupContext`;
     }
 
+
+    /**
+     * This method creates an endpoint control category
+     * @param  {string} contextId
+     * @param  {string} categoryName
+     * @param  {string} iconName
+     * @returns Promise of node info
+     */
     public createCategory(contextId: string, categoryName: string, iconName: string): Promise<typeof Model> {
         return groupManagerService.addCategory(contextId, categoryName, iconName).then((result) => {
             const nodeId = result.getId().get();
@@ -73,12 +106,27 @@ export class SpinalControlEndpointService {
         })
     }
 
+
+    /**
+     * get and return all categories in the context
+     * @param  {string} nodeId
+     * @returns Promise of the info list of all categories
+     */
     public getCategories(nodeId: string): Promise<Array<typeof Model>> {
         return groupManagerService.getCategories(nodeId).then((result) => {
             return result.map(el => SpinalGraphService.getInfo(el.id.get()));
         })
     }
 
+
+    /**
+     * This method creates an endpoint control group
+     * @param  {string} contextId
+     * @param  {string} categoryId
+     * @param  {string} groupName
+     * @param  {string} groupColor
+     * @returns Promise of node info
+     */
     public createGroup(contextId: string, categoryId: string, groupName: string, groupColor: string): Promise<typeof Model> {
         return groupManagerService.addGroup(contextId, categoryId, groupName, groupColor).then((result) => {
             const nodeId = result.getId().get();
@@ -86,12 +134,24 @@ export class SpinalControlEndpointService {
         })
     }
 
+
+    /**
+     * get and return all groups in the category
+     * @param  {string} nodeId
+     * @returns Promise of the info list of all groups
+     */
     public getGroups(nodeId: string): Promise<Array<typeof Model>> {
         return groupManagerService.getGroups(nodeId).then((result) => {
             return result.map(el => SpinalGraphService.getInfo(el.id.get()));
         })
     }
 
+
+    /**
+     * checks if the id passed in parameter is a group of control Endpoint
+     * @param  {string} id
+     * @returns boolean
+     */
     public isControlPointGroup(id: string): boolean {
         const info = SpinalGraphService.getInfo(id);
         const type = info.type.get();
@@ -99,15 +159,36 @@ export class SpinalControlEndpointService {
         return type === `${this.CONTROL_POINT_TYPE}Group`;
     }
 
+
+    /**
+     * creates and links a profil of control endpoint to the group selected in the context selected
+     * @param  {string} contextId
+     * @param  {string} groupId
+     * @param  {{name:string; endpoints: Array<IControlEndpoint>}} controlPointProfil
+     * @returns Promise of node info
+     */
     public createControlPointProfil(contextId: string, groupId: string, controlPointProfil: { name: string; endpoints: Array<IControlEndpoint> } = { name: "unknow", endpoints: [] }): Promise<any> {
         const profilNodeId = SpinalGraphService.createNode({ name: controlPointProfil.name, type: this.CONTROL_POINT_TYPE }, new Lst(controlPointProfil.endpoints));
         return groupManagerService.linkElementToGroup(contextId, groupId, profilNodeId);
     }
 
+
+    /**
+     * get All control endpoint node linked to group selected
+     * @param  {string} groupId
+     * @returns Promise of the info list of all control point node
+     */
     public getControlPoint(groupId: string): Promise<Array<typeof Model>> {
         return groupManagerService.getElementsLinkedToGroup(groupId);
     }
 
+
+    /**
+     * get All control endpoint profile  linked to control endpoint node
+     * @param  {string} contextId
+     * @param  {string} controlPointId
+     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     */
     public async getControlPointProfil(contextId: string, controlPointId: string): Promise<{ name: string, endpoints: any }> {
         let realNode = SpinalGraphService.getRealNode(controlPointId);
 
@@ -130,16 +211,24 @@ export class SpinalControlEndpointService {
 
     }
 
-    public async linkControlPointToRooms(roomNodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>> {
 
-        const isLinked = await this.controlPointProfilIsAlreadyLinked(controlPointId, roomNodeId);
+    /**
+     * link the control point to a node and create the bms endpoints according to the control point profiles
+     * @param  {string} nodeId
+     * @param  {string} controlPointContextId
+     * @param  {string} controlPointId
+     * @returns Promise of the info list
+     */
+    public async linkControlPointToRooms(nodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>> {
+
+        const isLinked = await this.controlPointProfilIsAlreadyLinked(controlPointId, nodeId);
 
         if (isLinked) return;
 
 
         const controlPoints = await this.getControlPointProfil(controlPointContextId, controlPointId);
-        const rooms = await this.getAllRooms(roomNodeId);
-        // const ids = [roomNodeId];
+        const rooms = await this.getAllRooms(nodeId);
+        // const ids = [nodeId];
 
         const promises = rooms.map(async el => {
             const nodeId = await this.createNode(controlPoints.name, controlPointContextId, controlPointId, controlPoints.endpoints.get());
@@ -151,12 +240,19 @@ export class SpinalControlEndpointService {
         })
 
         return Promise.all(promises).then((result) => {
-            this.saveItemLinked(controlPointId, [roomNodeId]);
-            this.saveItemLinked(roomNodeId, [controlPointId]);
-            return result;
+            this.saveItemLinked(controlPointId, [nodeId]);
+            this.saveItemLinked(nodeId, [controlPointId]);
+            return result.map(el => SpinalGraphService.getInfo(el.getId().get()));
         })
     }
 
+    /**
+     * Edit the control point profile and update the bms endpoints associated according to the control point profiles
+     * @param  {string} contextId
+     * @param  {string} controlPointId
+     * @param  {Array<IControlEndpoint>} values
+     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     */
     public async editControlPointProfil(contextId: string, controlPointId: string, values: Array<IControlEndpoint>): Promise<{ name: string, endpoints: any }> {
         const res = await this.getControlPointProfil(contextId, controlPointId);
         // res.endpoints.set(values);
@@ -171,22 +267,14 @@ export class SpinalControlEndpointService {
         return res;
     }
 
+
+
+    /**
+     * get All node linked to the control point
+     * @param  {string} controlProfilId
+     * @returns Promise of the info list of all node
+     */
     public async getElementLinked(controlProfilId: string): Promise<Array<typeof Model>> {
-        // const realNode = SpinalGraphService.getRealNode(controlProfilId);
-        // if (!realNode || !realNode.info || !realNode.info.linkedItems) return [];
-
-        // return new Promise((resolve, reject) => {
-        //     realNode.info.linkedItems.load((res) => {
-        //         const items = [];
-        //         for (let index = 0; index < res.length; index++) {
-        //             const node = res[index];
-        //             (<any>SpinalGraphService)._addNode(node);
-        //             items.push(node.info.get());
-
-        //         }
-        //         return resolve(items);
-        //     })
-        // });
 
         return this.loadElementLinked(controlProfilId).then((res) => {
             if (!res) return [];
@@ -203,6 +291,11 @@ export class SpinalControlEndpointService {
         })
     }
 
+    /**
+     * For a selected group format the control point profiles and the rooms of this group
+     * @param  {string} groupId
+     * @returns Promise of {endpointProfils : list of control point profil , rooms : list of rooms}
+     */
     public async getDataFormated(groupId: string): Promise<any> {
         const elementLinked = await this.getElementLinked(groupId);
         const rooms = await this.getAllRooms(groupId);
@@ -219,28 +312,68 @@ export class SpinalControlEndpointService {
         return Promise.all(promises);
     }
 
-    public getReferencesLinked(roomId: string, profilId: string): Promise<any> {
-        return SpinalGraphService.getChildren(roomId, [this.ROOM_TO_CONTROL_GROUP]).then(profils => {
+
+    /**
+     * get and return the endpoint linked to nodeId and created according the profil selected
+     * @param  {string} nodeId 
+     * @param  {string} profilId
+     * @returns Promise
+     */
+    public getReferencesLinked(nodeId: string, profilId: string): Promise<any> {
+        return SpinalGraphService.getChildren(nodeId, [this.ROOM_TO_CONTROL_GROUP]).then(profils => {
             const found = profils.find(el => el.referenceId.get() === profilId)
             return found;
         });
     }
 
-    public async getEndpointsLinked(roomId: string, profilId: string): Promise<Array<any>> {
 
-        const endpointsInfo = await this.getEndpointsNodeLinked(roomId, profilId);
+
+    /**
+     * get All endpoints linked to roomId and created according the profil selected
+     * @param  {string} roomId - nodeId
+     * @param  {string} profilId - controlEndpoint profil id
+     * @returns Promise
+     */
+    public async getEndpointsLinked(nodeId: string, profilId: string): Promise<Array<any>> {
+        const endpointsInfo = await this.getEndpointsNodeLinked(nodeId, profilId);
         const promises = endpointsInfo.map(el => el.element.load());
         return Promise.all(promises);
 
     }
 
+    /**
+     * get All endpoints Nodes linked to roomId and created according the profil selected
+     * @param  {string} roomId - nodeId
+     * @param  {string} profilId - controlEndpoint profil id
+     * @returns Promise
+     */
     public async getEndpointsNodeLinked(roomId: string, profilId: string): Promise<Array<any>> {
         const profilFound = await this.getReferencesLinked(roomId, profilId);
 
         if (profilFound) {
             return SpinalGraphService.getChildren(profilFound.id.get(), [SpinalBmsEndpoint.relationName]);
         }
+
         return [];
+    }
+    /**
+     * Get all node linked to the nodeId (control endpoint | id of group)
+     * @param  {string} nodeId - controlPointId or groupId
+     * @returns Promise
+     */
+    public loadElementLinked(nodeId: string): Promise<any> {
+        const realNode = SpinalGraphService.getRealNode(nodeId);
+        if (!realNode || !realNode.info || !realNode.info.linkedItems) {
+            let res = new Lst();
+            realNode.info.add_attr({ linkedItems: new Ptr(res) });
+            return Promise.resolve(res);
+        };
+
+        return new Promise((resolve, reject) => {
+            realNode.info.linkedItems.load((res) => {
+                return resolve(res);
+            })
+        });
     }
 
 
@@ -379,27 +512,6 @@ export class SpinalControlEndpointService {
         // return ite;
     }
 
-    private loadElementLinked(controlProfilId: string): Promise<any> {
-        const realNode = SpinalGraphService.getRealNode(controlProfilId);
-        if (!realNode || !realNode.info || !realNode.info.linkedItems) {
-            let res = new Lst();
-            realNode.info.add_attr({ linkedItems: new Ptr(res) });
-            return Promise.resolve(res);
-        };
-
-        return new Promise((resolve, reject) => {
-            realNode.info.linkedItems.load((res) => {
-                // const items = [];
-                // for (let index = 0; index < res.length; index++) {
-                //     const node = res[index];
-                //     (<any>SpinalGraphService)._addNode(node);
-                //     items.push(node.info.get());
-
-                // }
-                return resolve(res);
-            })
-        });
-    }
 
     private isLinked(items: typeof Lst, id: string): boolean {
 

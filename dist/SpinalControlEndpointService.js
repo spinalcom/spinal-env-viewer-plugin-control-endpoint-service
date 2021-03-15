@@ -32,6 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SpinalControlEndpointService = void 0;
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-service");
 const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-viewer-plugin-group-manager-service");
@@ -40,6 +41,13 @@ const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
 const _1 = require(".");
 const spinal_env_viewer_plugin_event_emitter_1 = require("spinal-env-viewer-plugin-event-emitter");
 const netWorkService = new spinal_model_bmsnetwork_1.default();
+/**
+ * @class SpinalControlEndpointService
+ *  @property {string} CONTROL_POINT_TYPE - typeof control point node
+ *  @property {string} CONTROL_GROUP_TYPE  - typeof control point group node
+ *  @property {string} CONTROL_GROUP_TO_CONTROLPOINTS  - relation between control point group and control point
+ *  @property {string} ROOM_TO_CONTROL_GROUP - Relation between room and control point group
+ */
 class SpinalControlEndpointService {
     constructor() {
         this.CONTROL_POINT_TYPE = "SpinalControlPoint";
@@ -49,56 +57,118 @@ class SpinalControlEndpointService {
         this.listenLinkItemToGroupEvent();
         this.listenUnLinkItemToGroupEvent();
     }
+    /**
+     * This method creates a context of control Endpoint
+     * @param  {string} contextName - The context of heatmap Name
+     * @returns Promise of node info
+     */
     createContext(contextName) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.createGroupContext(contextName, this.CONTROL_POINT_TYPE).then((context) => {
             const contextId = context.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(contextId);
         });
     }
+    /**
+     * retrieves and returns all contexts of control Endpoint
+     * @returns Promise of the info list of all contexts
+     */
     getContexts() {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroupContexts(this.CONTROL_POINT_TYPE).then((contexts) => {
             return contexts.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id));
         });
     }
+    /**
+     * checks if the id passed in parameter is a context of control Endpoint
+     * @param  {string} id
+     * @returns boolean
+     */
     isControlPointContext(id) {
         const info = spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(id);
         const type = info.type.get();
         return type === `${this.CONTROL_POINT_TYPE}GroupContext`;
     }
+    /**
+     * This method creates an endpoint control category
+     * @param  {string} contextId
+     * @param  {string} categoryName
+     * @param  {string} iconName
+     * @returns Promise of node info
+     */
     createCategory(contextId, categoryName, iconName) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addCategory(contextId, categoryName, iconName).then((result) => {
             const nodeId = result.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(nodeId);
         });
     }
+    /**
+     * get and return all categories in the context
+     * @param  {string} nodeId
+     * @returns Promise of the info list of all categories
+     */
     getCategories(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getCategories(nodeId).then((result) => {
             return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
         });
     }
+    /**
+     * This method creates an endpoint control group
+     * @param  {string} contextId
+     * @param  {string} categoryId
+     * @param  {string} groupName
+     * @param  {string} groupColor
+     * @returns Promise of node info
+     */
     createGroup(contextId, categoryId, groupName, groupColor) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addGroup(contextId, categoryId, groupName, groupColor).then((result) => {
             const nodeId = result.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(nodeId);
         });
     }
+    /**
+     * get and return all groups in the category
+     * @param  {string} nodeId
+     * @returns Promise of the info list of all groups
+     */
     getGroups(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroups(nodeId).then((result) => {
             return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
         });
     }
+    /**
+     * checks if the id passed in parameter is a group of control Endpoint
+     * @param  {string} id
+     * @returns boolean
+     */
     isControlPointGroup(id) {
         const info = spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(id);
         const type = info.type.get();
         return type === `${this.CONTROL_POINT_TYPE}Group`;
     }
+    /**
+     * creates and links a profil of control endpoint to the group selected in the context selected
+     * @param  {string} contextId
+     * @param  {string} groupId
+     * @param  {{name:string; endpoints: Array<IControlEndpoint>}} controlPointProfil
+     * @returns Promise of node info
+     */
     createControlPointProfil(contextId, groupId, controlPointProfil = { name: "unknow", endpoints: [] }) {
         const profilNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({ name: controlPointProfil.name, type: this.CONTROL_POINT_TYPE }, new spinal_core_connectorjs_type_1.Lst(controlPointProfil.endpoints));
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.linkElementToGroup(contextId, groupId, profilNodeId);
     }
+    /**
+     * get All control endpoint node linked to group selected
+     * @param  {string} groupId
+     * @returns Promise of the info list of all control point node
+     */
     getControlPoint(groupId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getElementsLinkedToGroup(groupId);
     }
+    /**
+     * get All control endpoint profile  linked to control endpoint node
+     * @param  {string} contextId
+     * @param  {string} controlPointId
+     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     */
     getControlPointProfil(contextId, controlPointId) {
         return __awaiter(this, void 0, void 0, function* () {
             let realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(controlPointId);
@@ -118,14 +188,21 @@ class SpinalControlEndpointService {
             };
         });
     }
-    linkControlPointToRooms(roomNodeId, controlPointContextId, controlPointId) {
+    /**
+     * link the control point to a node and create the bms endpoints according to the control point profiles
+     * @param  {string} nodeId
+     * @param  {string} controlPointContextId
+     * @param  {string} controlPointId
+     * @returns Promise of the info list
+     */
+    linkControlPointToRooms(nodeId, controlPointContextId, controlPointId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isLinked = yield this.controlPointProfilIsAlreadyLinked(controlPointId, roomNodeId);
+            const isLinked = yield this.controlPointProfilIsAlreadyLinked(controlPointId, nodeId);
             if (isLinked)
                 return;
             const controlPoints = yield this.getControlPointProfil(controlPointContextId, controlPointId);
-            const rooms = yield this.getAllRooms(roomNodeId);
-            // const ids = [roomNodeId];
+            const rooms = yield this.getAllRooms(nodeId);
+            // const ids = [nodeId];
             const promises = rooms.map((el) => __awaiter(this, void 0, void 0, function* () {
                 const nodeId = yield this.createNode(controlPoints.name, controlPointContextId, controlPointId, controlPoints.endpoints.get());
                 return spinal_env_viewer_graph_service_1.SpinalGraphService.addChildInContext(el.id.get(), nodeId, controlPointContextId, this.ROOM_TO_CONTROL_GROUP, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE);
@@ -135,12 +212,19 @@ class SpinalControlEndpointService {
                 // })
             }));
             return Promise.all(promises).then((result) => {
-                this.saveItemLinked(controlPointId, [roomNodeId]);
-                this.saveItemLinked(roomNodeId, [controlPointId]);
-                return result;
+                this.saveItemLinked(controlPointId, [nodeId]);
+                this.saveItemLinked(nodeId, [controlPointId]);
+                return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.getId().get()));
             });
         });
     }
+    /**
+     * Edit the control point profile and update the bms endpoints associated according to the control point profiles
+     * @param  {string} contextId
+     * @param  {string} controlPointId
+     * @param  {Array<IControlEndpoint>} values
+     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     */
     editControlPointProfil(contextId, controlPointId, values) {
         return __awaiter(this, void 0, void 0, function* () {
             const res = yield this.getControlPointProfil(contextId, controlPointId);
@@ -153,21 +237,13 @@ class SpinalControlEndpointService {
             return res;
         });
     }
+    /**
+     * get All node linked to the control point
+     * @param  {string} controlProfilId
+     * @returns Promise of the info list of all node
+     */
     getElementLinked(controlProfilId) {
         return __awaiter(this, void 0, void 0, function* () {
-            // const realNode = SpinalGraphService.getRealNode(controlProfilId);
-            // if (!realNode || !realNode.info || !realNode.info.linkedItems) return [];
-            // return new Promise((resolve, reject) => {
-            //     realNode.info.linkedItems.load((res) => {
-            //         const items = [];
-            //         for (let index = 0; index < res.length; index++) {
-            //             const node = res[index];
-            //             (<any>SpinalGraphService)._addNode(node);
-            //             items.push(node.info.get());
-            //         }
-            //         return resolve(items);
-            //     })
-            // });
             return this.loadElementLinked(controlProfilId).then((res) => {
                 if (!res)
                     return [];
@@ -181,6 +257,11 @@ class SpinalControlEndpointService {
             });
         });
     }
+    /**
+     * For a selected group format the control point profiles and the rooms of this group
+     * @param  {string} groupId
+     * @returns Promise of {endpointProfils : list of control point profil , rooms : list of rooms}
+     */
     getDataFormated(groupId) {
         return __awaiter(this, void 0, void 0, function* () {
             const elementLinked = yield this.getElementLinked(groupId);
@@ -196,19 +277,37 @@ class SpinalControlEndpointService {
             return Promise.all(promises);
         });
     }
-    getReferencesLinked(roomId, profilId) {
-        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(roomId, [this.ROOM_TO_CONTROL_GROUP]).then(profils => {
+    /**
+     * get and return the endpoint linked to nodeId and created according the profil selected
+     * @param  {string} nodeId
+     * @param  {string} profilId
+     * @returns Promise
+     */
+    getReferencesLinked(nodeId, profilId) {
+        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(nodeId, [this.ROOM_TO_CONTROL_GROUP]).then(profils => {
             const found = profils.find(el => el.referenceId.get() === profilId);
             return found;
         });
     }
-    getEndpointsLinked(roomId, profilId) {
+    /**
+     * get All endpoints linked to roomId and created according the profil selected
+     * @param  {string} roomId - nodeId
+     * @param  {string} profilId - controlEndpoint profil id
+     * @returns Promise
+     */
+    getEndpointsLinked(nodeId, profilId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const endpointsInfo = yield this.getEndpointsNodeLinked(roomId, profilId);
+            const endpointsInfo = yield this.getEndpointsNodeLinked(nodeId, profilId);
             const promises = endpointsInfo.map(el => el.element.load());
             return Promise.all(promises);
         });
     }
+    /**
+     * get All endpoints Nodes linked to roomId and created according the profil selected
+     * @param  {string} roomId - nodeId
+     * @param  {string} profilId - controlEndpoint profil id
+     * @returns Promise
+     */
     getEndpointsNodeLinked(roomId, profilId) {
         return __awaiter(this, void 0, void 0, function* () {
             const profilFound = yield this.getReferencesLinked(roomId, profilId);
@@ -216,6 +315,25 @@ class SpinalControlEndpointService {
                 return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(profilFound.id.get(), [spinal_model_bmsnetwork_1.SpinalBmsEndpoint.relationName]);
             }
             return [];
+        });
+    }
+    /**
+     * Get all node linked to the nodeId (control endpoint | id of group)
+     * @param  {string} nodeId - controlPointId or groupId
+     * @returns Promise
+     */
+    loadElementLinked(nodeId) {
+        const realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(nodeId);
+        if (!realNode || !realNode.info || !realNode.info.linkedItems) {
+            let res = new spinal_core_connectorjs_type_1.Lst();
+            realNode.info.add_attr({ linkedItems: new spinal_core_connectorjs_type_1.Ptr(res) });
+            return Promise.resolve(res);
+        }
+        ;
+        return new Promise((resolve, reject) => {
+            realNode.info.linkedItems.load((res) => {
+                return resolve(res);
+            });
         });
     }
     ///////////////////////////////////////////////////////////////////////////////////////////
@@ -320,26 +438,6 @@ class SpinalControlEndpointService {
             // const _ptr = new Ptr(new Lst(items));
             // realNode.info.mod_attr('linkedItems', _ptr);
             // return ite;
-        });
-    }
-    loadElementLinked(controlProfilId) {
-        const realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(controlProfilId);
-        if (!realNode || !realNode.info || !realNode.info.linkedItems) {
-            let res = new spinal_core_connectorjs_type_1.Lst();
-            realNode.info.add_attr({ linkedItems: new spinal_core_connectorjs_type_1.Ptr(res) });
-            return Promise.resolve(res);
-        }
-        ;
-        return new Promise((resolve, reject) => {
-            realNode.info.linkedItems.load((res) => {
-                // const items = [];
-                // for (let index = 0; index < res.length; index++) {
-                //     const node = res[index];
-                //     (<any>SpinalGraphService)._addNode(node);
-                //     items.push(node.info.get());
-                // }
-                return resolve(res);
-            });
         });
     }
     isLinked(items, id) {

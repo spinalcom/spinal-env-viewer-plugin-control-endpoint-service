@@ -23,21 +23,22 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ControlEndpointType = exports.ControlEndpointDataType = exports.CalculationRule = exports.ControlPointObj = exports.SpinalControlPoint = exports.getConfig = exports.NumberConfig = exports.EnumConfig = exports.BoolConfig = exports.spinalHeatmapService = exports.spinalControlPointService = void 0;
 const SpinalControlEndpointService_1 = require("./SpinalControlEndpointService");
 const config_1 = require("./models/config");
-exports.getConfig = config_1.getConfig;
-exports.BoolConfig = config_1.BoolConfig;
-exports.EnumConfig = config_1.EnumConfig;
-exports.NumberConfig = config_1.NumberConfig;
+Object.defineProperty(exports, "getConfig", { enumerable: true, get: function () { return config_1.getConfig; } });
+Object.defineProperty(exports, "BoolConfig", { enumerable: true, get: function () { return config_1.BoolConfig; } });
+Object.defineProperty(exports, "EnumConfig", { enumerable: true, get: function () { return config_1.EnumConfig; } });
+Object.defineProperty(exports, "NumberConfig", { enumerable: true, get: function () { return config_1.NumberConfig; } });
 const controlPointsModel_1 = require("./models/controlPointsModel");
-exports.SpinalControlPoint = controlPointsModel_1.SpinalControlPoint;
-exports.ControlPointObj = controlPointsModel_1.ControlPointObj;
+Object.defineProperty(exports, "SpinalControlPoint", { enumerable: true, get: function () { return controlPointsModel_1.SpinalControlPoint; } });
+Object.defineProperty(exports, "ControlPointObj", { enumerable: true, get: function () { return controlPointsModel_1.ControlPointObj; } });
 const CalculationRulesDataType_1 = require("./dataTypes/CalculationRulesDataType");
-exports.CalculationRule = CalculationRulesDataType_1.CalculationRule;
+Object.defineProperty(exports, "CalculationRule", { enumerable: true, get: function () { return CalculationRulesDataType_1.CalculationRule; } });
 const ControlEndpointDataType_1 = require("./dataTypes/ControlEndpointDataType");
-exports.ControlEndpointDataType = ControlEndpointDataType_1.ControlEndpointDataType;
+Object.defineProperty(exports, "ControlEndpointDataType", { enumerable: true, get: function () { return ControlEndpointDataType_1.ControlEndpointDataType; } });
 const ControlEndpointType_1 = require("./dataTypes/ControlEndpointType");
-exports.ControlEndpointType = ControlEndpointType_1.ControlEndpointType;
+Object.defineProperty(exports, "ControlEndpointType", { enumerable: true, get: function () { return ControlEndpointType_1.ControlEndpointType; } });
 const spinalControlPointService = new SpinalControlEndpointService_1.SpinalControlEndpointService();
 exports.spinalControlPointService = spinalControlPointService;
 const spinalHeatmapService = spinalControlPointService;

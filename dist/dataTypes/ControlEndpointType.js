@@ -23,6 +23,7 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ControlEndpointType = void 0;
 var ControlEndpointType;
 (function (ControlEndpointType) {
     ControlEndpointType["Temperature"] = "Temperature";

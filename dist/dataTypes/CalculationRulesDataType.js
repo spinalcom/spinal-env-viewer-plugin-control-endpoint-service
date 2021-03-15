@@ -23,6 +23,7 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CalculationRule = void 0;
 var CalculationRule;
 (function (CalculationRule) {
     CalculationRule["Reference"] = "Reference";

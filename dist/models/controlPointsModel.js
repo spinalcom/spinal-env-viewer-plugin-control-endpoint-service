@@ -23,6 +23,7 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SpinalControlPoint = exports.ControlPointObj = void 0;
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const ControlEndpointType_1 = require("../dataTypes/ControlEndpointType");
 const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
