@@ -16,12 +16,12 @@ export declare class SpinalControlEndpointService {
     /**
      * This method creates a context of control Endpoint
      * @param  {string} contextName - The context of heatmap Name
-     * @returns Promise of node info
+     * @returns Promise
      */
     createContext(contextName: string): Promise<typeof Model>;
     /**
      * retrieves and returns all contexts of control Endpoint
-     * @returns Promise of the info list of all contexts
+     * @returns Promise
      */
     getContexts(): Promise<Array<typeof Model>>;
     /**
@@ -35,13 +35,13 @@ export declare class SpinalControlEndpointService {
      * @param  {string} contextId
      * @param  {string} categoryName
      * @param  {string} iconName
-     * @returns Promise of node info
+     * @returns Promise
      */
     createCategory(contextId: string, categoryName: string, iconName: string): Promise<typeof Model>;
     /**
      * get and return all categories in the context
      * @param  {string} nodeId
-     * @returns Promise of the info list of all categories
+     * @returns Promise
      */
     getCategories(nodeId: string): Promise<Array<typeof Model>>;
     /**
@@ -50,13 +50,13 @@ export declare class SpinalControlEndpointService {
      * @param  {string} categoryId
      * @param  {string} groupName
      * @param  {string} groupColor
-     * @returns Promise of node info
+     * @returns Promise
      */
     createGroup(contextId: string, categoryId: string, groupName: string, groupColor: string): Promise<typeof Model>;
     /**
      * get and return all groups in the category
      * @param  {string} nodeId
-     * @returns Promise of the info list of all groups
+     * @returns Promise
      */
     getGroups(nodeId: string): Promise<Array<typeof Model>>;
     /**
@@ -69,8 +69,8 @@ export declare class SpinalControlEndpointService {
      * creates and links a profil of control endpoint to the group selected in the context selected
      * @param  {string} contextId
      * @param  {string} groupId
-     * @param  {{name:string; endpoints: Array<IControlEndpoint>}} controlPointProfil
-     * @returns Promise of node info
+     * @param  {any} controlPointProfil
+     * @returns Promise
      */
     createControlPointProfil(contextId: string, groupId: string, controlPointProfil?: {
         name: string;
@@ -79,14 +79,14 @@ export declare class SpinalControlEndpointService {
     /**
      * get All control endpoint node linked to group selected
      * @param  {string} groupId
-     * @returns Promise of the info list of all control point node
+     * @returns Promise
      */
     getControlPoint(groupId: string): Promise<Array<typeof Model>>;
     /**
      * get All control endpoint profile  linked to control endpoint node
      * @param  {string} contextId
      * @param  {string} controlPointId
-     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     * @returns Promise
      */
     getControlPointProfil(contextId: string, controlPointId: string): Promise<{
         name: string;
@@ -97,15 +97,15 @@ export declare class SpinalControlEndpointService {
      * @param  {string} nodeId
      * @param  {string} controlPointContextId
      * @param  {string} controlPointId
-     * @returns Promise of the info list
+     * @returns Promise
      */
     linkControlPointToRooms(nodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>>;
     /**
      * Edit the control point profile and update the bms endpoints associated according to the control point profiles
      * @param  {string} contextId
      * @param  {string} controlPointId
-     * @param  {Array<IControlEndpoint>} values
-     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     * @param  {Array} values
+     * @returns Promise
      */
     editControlPointProfil(contextId: string, controlPointId: string, values: Array<IControlEndpoint>): Promise<{
         name: string;
@@ -114,13 +114,13 @@ export declare class SpinalControlEndpointService {
     /**
      * get All node linked to the control point
      * @param  {string} controlProfilId
-     * @returns Promise of the info list of all node
+     * @returns Promise
      */
     getElementLinked(controlProfilId: string): Promise<Array<typeof Model>>;
     /**
      * For a selected group format the control point profiles and the rooms of this group
      * @param  {string} groupId
-     * @returns Promise of {endpointProfils : list of control point profil , rooms : list of rooms}
+     * @returns Promise
      */
     getDataFormated(groupId: string): Promise<any>;
     /**

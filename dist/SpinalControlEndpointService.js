@@ -1,27 +1,4 @@
 "use strict";
-/*
- * Copyright 2020 SpinalCom - www.spinalcom.com
- *
- * This file is part of SpinalCore.
- *
- * Please read all of the following terms and conditions
- * of the Free Software license Agreement ("Agreement")
- * carefully.
- *
- * This Agreement is a legally binding contract between
- * the Licensee (as defined below) and SpinalCom that
- * sets forth the terms and conditions that govern your
- * use of the Program. By installing and/or using the
- * Program, you agree to abide by all the terms and
- * conditions stated or referenced herein.
- *
- * If you do not agree to abide by these terms and
- * conditions, do not demonstrate your acceptance and do
- * not install or use the Program.
- * You should have received a copy of the license along
- * with this file. If not, see
- * <http://resources.spinalcom.com/licenses.pdf>.
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -60,7 +37,7 @@ class SpinalControlEndpointService {
     /**
      * This method creates a context of control Endpoint
      * @param  {string} contextName - The context of heatmap Name
-     * @returns Promise of node info
+     * @returns Promise
      */
     createContext(contextName) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.createGroupContext(contextName, this.CONTROL_POINT_TYPE).then((context) => {
@@ -70,7 +47,7 @@ class SpinalControlEndpointService {
     }
     /**
      * retrieves and returns all contexts of control Endpoint
-     * @returns Promise of the info list of all contexts
+     * @returns Promise
      */
     getContexts() {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroupContexts(this.CONTROL_POINT_TYPE).then((contexts) => {
@@ -92,7 +69,7 @@ class SpinalControlEndpointService {
      * @param  {string} contextId
      * @param  {string} categoryName
      * @param  {string} iconName
-     * @returns Promise of node info
+     * @returns Promise
      */
     createCategory(contextId, categoryName, iconName) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addCategory(contextId, categoryName, iconName).then((result) => {
@@ -103,7 +80,7 @@ class SpinalControlEndpointService {
     /**
      * get and return all categories in the context
      * @param  {string} nodeId
-     * @returns Promise of the info list of all categories
+     * @returns Promise
      */
     getCategories(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getCategories(nodeId).then((result) => {
@@ -116,7 +93,7 @@ class SpinalControlEndpointService {
      * @param  {string} categoryId
      * @param  {string} groupName
      * @param  {string} groupColor
-     * @returns Promise of node info
+     * @returns Promise
      */
     createGroup(contextId, categoryId, groupName, groupColor) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addGroup(contextId, categoryId, groupName, groupColor).then((result) => {
@@ -127,7 +104,7 @@ class SpinalControlEndpointService {
     /**
      * get and return all groups in the category
      * @param  {string} nodeId
-     * @returns Promise of the info list of all groups
+     * @returns Promise
      */
     getGroups(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroups(nodeId).then((result) => {
@@ -148,8 +125,8 @@ class SpinalControlEndpointService {
      * creates and links a profil of control endpoint to the group selected in the context selected
      * @param  {string} contextId
      * @param  {string} groupId
-     * @param  {{name:string; endpoints: Array<IControlEndpoint>}} controlPointProfil
-     * @returns Promise of node info
+     * @param  {any} controlPointProfil
+     * @returns Promise
      */
     createControlPointProfil(contextId, groupId, controlPointProfil = { name: "unknow", endpoints: [] }) {
         const profilNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({ name: controlPointProfil.name, type: this.CONTROL_POINT_TYPE }, new spinal_core_connectorjs_type_1.Lst(controlPointProfil.endpoints));
@@ -158,7 +135,7 @@ class SpinalControlEndpointService {
     /**
      * get All control endpoint node linked to group selected
      * @param  {string} groupId
-     * @returns Promise of the info list of all control point node
+     * @returns Promise
      */
     getControlPoint(groupId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getElementsLinkedToGroup(groupId);
@@ -167,7 +144,7 @@ class SpinalControlEndpointService {
      * get All control endpoint profile  linked to control endpoint node
      * @param  {string} contextId
      * @param  {string} controlPointId
-     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     * @returns Promise
      */
     getControlPointProfil(contextId, controlPointId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -193,7 +170,7 @@ class SpinalControlEndpointService {
      * @param  {string} nodeId
      * @param  {string} controlPointContextId
      * @param  {string} controlPointId
-     * @returns Promise of the info list
+     * @returns Promise
      */
     linkControlPointToRooms(nodeId, controlPointContextId, controlPointId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -222,8 +199,8 @@ class SpinalControlEndpointService {
      * Edit the control point profile and update the bms endpoints associated according to the control point profiles
      * @param  {string} contextId
      * @param  {string} controlPointId
-     * @param  {Array<IControlEndpoint>} values
-     * @returns Promise of { name : string, endpoints : array of control endpoint profil }
+     * @param  {Array} values
+     * @returns Promise
      */
     editControlPointProfil(contextId, controlPointId, values) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -240,7 +217,7 @@ class SpinalControlEndpointService {
     /**
      * get All node linked to the control point
      * @param  {string} controlProfilId
-     * @returns Promise of the info list of all node
+     * @returns Promise
      */
     getElementLinked(controlProfilId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -260,7 +237,7 @@ class SpinalControlEndpointService {
     /**
      * For a selected group format the control point profiles and the rooms of this group
      * @param  {string} groupId
-     * @returns Promise of {endpointProfils : list of control point profil , rooms : list of rooms}
+     * @returns Promise
      */
     getDataFormated(groupId) {
         return __awaiter(this, void 0, void 0, function* () {

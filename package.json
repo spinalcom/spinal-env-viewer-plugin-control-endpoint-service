@@ -6,7 +6,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc",
     "dev": "tsc -w",
-    "doc": "jsdoc2md  dist/SpinalControlEndpointService.js > README.md"
+    "doc": "jsdoc2md dist/SpinalControlEndpointService.js > docs/1-containers.md && cat docs/*.md > README.md"
   },
   "dependencies": {
     "spinal-env-viewer-graph-service": "git+https://github.com/spinalcom/Spinal-Graph-Service.git",

@@ -24,4 +24,3 @@ import { spinalHeatmapService } from "spinal-env-viewer-plugin-control-endpoint-
 ```
 
 ## Service Documentation
-{{>main}}
