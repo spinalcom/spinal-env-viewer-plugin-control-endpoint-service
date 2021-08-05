@@ -3,7 +3,7 @@ import { SpinalGraphService, SPINAL_RELATION_PTR_LST_TYPE } from "spinal-env-vie
 import { groupManagerService } from 'spinal-env-viewer-plugin-group-manager-service'
 
 import { IControlEndpoint } from "./interfaces/ControlEndpoint";
-import geographicService from 'spinal-env-viewer-context-geographic-service'
+
 import NetworkService, { SpinalBmsEndpoint, SpinalBmsEndpointGroup } from "spinal-model-bmsnetwork";
 import { ControlEndpointDataType, ControlEndpointType } from ".";
 
@@ -195,7 +195,7 @@ export class SpinalControlEndpointService {
      * @param  {string} controlPointId
      * @returns Promise
      */
-    public async linkControlPointToRooms(nodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>> {
+    public async linkControlPointToGroup(nodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>> {
 
         const isLinked = await this.controlPointProfilIsAlreadyLinked(controlPointId, nodeId);
 
@@ -203,7 +203,7 @@ export class SpinalControlEndpointService {
 
 
         const controlPoints = await this.getControlPointProfil(controlPointContextId, controlPointId);
-        const rooms = await this.getAllRooms(nodeId);
+        const rooms = await this.getGroupItems(nodeId);
         // const ids = [nodeId];
 
         const promises = rooms.map(async el => {
@@ -274,7 +274,7 @@ export class SpinalControlEndpointService {
      */
     public async getDataFormated(groupId: string): Promise<any> {
         const elementLinked = await this.getElementLinked(groupId);
-        const rooms = await this.getAllRooms(groupId);
+        const rooms = await this.getGroupItems(groupId);
 
         const promises = elementLinked.map(async element => {
             const el = (<any>element).get();
@@ -357,11 +357,11 @@ export class SpinalControlEndpointService {
     //                                   PRIVATE                                             //
     ///////////////////////////////////////////////////////////////////////////////////////////
 
-    private async getAllRooms(nodeId: string): Promise<Array<any>> {
-        const info = SpinalGraphService.getInfo(nodeId);
-        if (info.type.get() === geographicService.constants.ROOM_TYPE || info.type.get() === geographicService.constants.EQUIPMENT_TYPE) {
-            return [info];
-        }
+    private async getGroupItems(nodeId: string): Promise<Array<any>> {
+        // const info = SpinalGraphService.getInfo(nodeId);
+        // if (info.type.get() === geographicService.constants.ROOM_TYPE || info.type.get() === geographicService.constants.EQUIPMENT_TYPE) {
+        //     return [info];
+        // }
         const groups = await groupManagerService.getGroups(nodeId);
         const promises = groups.map(el => groupManagerService.getElementsLinkedToGroup(el.id.get()))
 
@@ -450,9 +450,9 @@ export class SpinalControlEndpointService {
         }
     }
 
-    private async saveItemLinked(profilIds: string, ids: Array<string>): Promise<Array<string>> {
-        const realNode = SpinalGraphService.getRealNode(profilIds);
-        let items = await this.loadElementLinked(profilIds);
+    private async saveItemLinked(profilId: string, ids: Array<string>): Promise<Array<string>> {
+        // const realNode = SpinalGraphService.getRealNode(profilId);
+        let items = await this.loadElementLinked(profilId);
 
         // if (!realNode || !realNode.info || !realNode.info.linkedItems) {
         //     const _ptr = new Ptr(new Lst(ids));
@@ -626,7 +626,7 @@ export class SpinalControlEndpointService {
         const promises = [];
 
         for (const group of elementsLinked) {
-            promises.push(this.getAllRooms((<any>group).id.get()))
+            promises.push(this.getGroupItems((<any>group).id.get()))
         }
 
         return Promise.all(promises).then((roomsArrays) => {

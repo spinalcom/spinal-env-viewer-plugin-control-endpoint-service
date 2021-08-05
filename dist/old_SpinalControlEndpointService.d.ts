@@ -99,7 +99,7 @@ export declare class SpinalControlEndpointService {
      * @param  {string} controlPointId
      * @returns Promise
      */
-    linkControlPointToRooms(nodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>>;
+    linkControlPointToGroup(nodeId: string, controlPointContextId: string, controlPointId: string): Promise<Array<any>>;
     /**
      * Edit the control point profile and update the bms endpoints associated according to the control point profiles
      * @param  {string} contextId
@@ -150,7 +150,7 @@ export declare class SpinalControlEndpointService {
      * @returns Promise
      */
     loadElementLinked(nodeId: string): Promise<any>;
-    private getAllRooms;
+    private getGroupItems;
     private createNode;
     private linkEndpointToProfil;
     private createEndpointNode;

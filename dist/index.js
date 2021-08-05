@@ -24,7 +24,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ControlEndpointType = exports.ControlEndpointDataType = exports.CalculationRule = exports.ControlPointObj = exports.SpinalControlPoint = exports.getConfig = exports.NumberConfig = exports.EnumConfig = exports.BoolConfig = exports.spinalHeatmapService = exports.spinalControlPointService = void 0;
-const SpinalControlEndpointService_1 = require("./SpinalControlEndpointService");
+// import { SpinalControlEndpointService } from "./SpinalControlEndpointService";
 const config_1 = require("./models/config");
 Object.defineProperty(exports, "getConfig", { enumerable: true, get: function () { return config_1.getConfig; } });
 Object.defineProperty(exports, "BoolConfig", { enumerable: true, get: function () { return config_1.BoolConfig; } });
@@ -39,6 +39,7 @@ const ControlEndpointDataType_1 = require("./dataTypes/ControlEndpointDataType")
 Object.defineProperty(exports, "ControlEndpointDataType", { enumerable: true, get: function () { return ControlEndpointDataType_1.ControlEndpointDataType; } });
 const ControlEndpointType_1 = require("./dataTypes/ControlEndpointType");
 Object.defineProperty(exports, "ControlEndpointType", { enumerable: true, get: function () { return ControlEndpointType_1.ControlEndpointType; } });
+const SpinalControlEndpointService_1 = require("./classes/SpinalControlEndpointService");
 const spinalControlPointService = new SpinalControlEndpointService_1.SpinalControlEndpointService();
 exports.spinalControlPointService = spinalControlPointService;
 const spinalHeatmapService = spinalControlPointService;
@@ -52,4 +53,5 @@ if (typeof globalRoot.spinal.spinalHeatmapService === 'undefined') {
 if (typeof globalRoot.spinal.spinalControlPointService === 'undefined') {
     globalRoot.spinal.spinalControlPointService = spinalControlPointService;
 }
+console.log("hello from control-endpoint-service");
 //# sourceMappingURL=index.js.map

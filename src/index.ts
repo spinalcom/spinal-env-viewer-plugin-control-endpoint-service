@@ -22,12 +22,16 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 
-import { SpinalControlEndpointService } from "./SpinalControlEndpointService";
+// import { SpinalControlEndpointService } from "./SpinalControlEndpointService";
+
+
 import { getConfig, BoolConfig, EnumConfig, NumberConfig } from './models/config'
 import { SpinalControlPoint, ControlPointObj } from './models/controlPointsModel'
 import { CalculationRule } from './dataTypes/CalculationRulesDataType';
 import { ControlEndpointDataType } from './dataTypes/ControlEndpointDataType';
 import { ControlEndpointType } from "./dataTypes/ControlEndpointType";
+
+import { SpinalControlEndpointService } from "./classes/SpinalControlEndpointService";
 
 
 const spinalControlPointService = new SpinalControlEndpointService();
@@ -44,6 +48,9 @@ if (typeof globalRoot.spinal.spinalHeatmapService === 'undefined') {
 if (typeof globalRoot.spinal.spinalControlPointService === 'undefined') {
     globalRoot.spinal.spinalControlPointService = spinalControlPointService;
 }
+
+console.log("hello from control-endpoint-service");
+
 
 export {
     spinalControlPointService,

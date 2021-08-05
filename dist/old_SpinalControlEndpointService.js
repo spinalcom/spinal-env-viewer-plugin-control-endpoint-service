@@ -13,7 +13,6 @@ exports.SpinalControlEndpointService = void 0;
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-service");
 const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-viewer-plugin-group-manager-service");
-const spinal_env_viewer_context_geographic_service_1 = require("spinal-env-viewer-context-geographic-service");
 const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
 const _1 = require(".");
 const spinal_env_viewer_plugin_event_emitter_1 = require("spinal-env-viewer-plugin-event-emitter");
@@ -172,13 +171,13 @@ class SpinalControlEndpointService {
      * @param  {string} controlPointId
      * @returns Promise
      */
-    linkControlPointToRooms(nodeId, controlPointContextId, controlPointId) {
+    linkControlPointToGroup(nodeId, controlPointContextId, controlPointId) {
         return __awaiter(this, void 0, void 0, function* () {
             const isLinked = yield this.controlPointProfilIsAlreadyLinked(controlPointId, nodeId);
             if (isLinked)
                 return;
             const controlPoints = yield this.getControlPointProfil(controlPointContextId, controlPointId);
-            const rooms = yield this.getAllRooms(nodeId);
+            const rooms = yield this.getGroupItems(nodeId);
             // const ids = [nodeId];
             const promises = rooms.map((el) => __awaiter(this, void 0, void 0, function* () {
                 const nodeId = yield this.createNode(controlPoints.name, controlPointContextId, controlPointId, controlPoints.endpoints.get());
@@ -242,7 +241,7 @@ class SpinalControlEndpointService {
     getDataFormated(groupId) {
         return __awaiter(this, void 0, void 0, function* () {
             const elementLinked = yield this.getElementLinked(groupId);
-            const rooms = yield this.getAllRooms(groupId);
+            const rooms = yield this.getGroupItems(groupId);
             const promises = elementLinked.map((element) => __awaiter(this, void 0, void 0, function* () {
                 const el = element.get();
                 const contextId = this.getContextId(el.id);
@@ -316,12 +315,12 @@ class SpinalControlEndpointService {
     ///////////////////////////////////////////////////////////////////////////////////////////
     //                                   PRIVATE                                             //
     ///////////////////////////////////////////////////////////////////////////////////////////
-    getAllRooms(nodeId) {
+    getGroupItems(nodeId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const info = spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(nodeId);
-            if (info.type.get() === spinal_env_viewer_context_geographic_service_1.default.constants.ROOM_TYPE || info.type.get() === spinal_env_viewer_context_geographic_service_1.default.constants.EQUIPMENT_TYPE) {
-                return [info];
-            }
+            // const info = SpinalGraphService.getInfo(nodeId);
+            // if (info.type.get() === geographicService.constants.ROOM_TYPE || info.type.get() === geographicService.constants.EQUIPMENT_TYPE) {
+            //     return [info];
+            // }
             const groups = yield spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroups(nodeId);
             const promises = groups.map(el => spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getElementsLinkedToGroup(el.id.get()));
             return Promise.all(promises).then((result) => {
@@ -390,10 +389,10 @@ class SpinalControlEndpointService {
                 return "";
         }
     }
-    saveItemLinked(profilIds, ids) {
+    saveItemLinked(profilId, ids) {
         return __awaiter(this, void 0, void 0, function* () {
-            const realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(profilIds);
-            let items = yield this.loadElementLinked(profilIds);
+            // const realNode = SpinalGraphService.getRealNode(profilId);
+            let items = yield this.loadElementLinked(profilId);
             // if (!realNode || !realNode.info || !realNode.info.linkedItems) {
             //     const _ptr = new Ptr(new Lst(ids));
             //     realNode.info.add_attr({ linkedItems: _ptr });
@@ -530,7 +529,7 @@ class SpinalControlEndpointService {
             const elementsLinked = yield this.getElementLinked(controlPointId);
             const promises = [];
             for (const group of elementsLinked) {
-                promises.push(this.getAllRooms(group.id.get()));
+                promises.push(this.getGroupItems(group.id.get()));
             }
             return Promise.all(promises).then((roomsArrays) => {
                 const rooms = roomsArrays.flat();
@@ -649,4 +648,4 @@ class SpinalControlEndpointService {
     }
 }
 exports.SpinalControlEndpointService = SpinalControlEndpointService;
-//# sourceMappingURL=SpinalControlEndpointService.js.map
+//# sourceMappingURL=old_SpinalControlEndpointService.js.map
