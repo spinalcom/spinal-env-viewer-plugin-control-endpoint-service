@@ -38,7 +38,8 @@ export const ControlPointObj: IControlEndpoint = Object.freeze({
     command: 0,
     saveTimeSeries: 0,
     config: getConfig(ControlEndpointDataType.Float),
-    icon: "device_thermostat"
+    icon: "device_thermostat",
+    isActive: true
 })
 
 export class SpinalControlPoint extends Model {

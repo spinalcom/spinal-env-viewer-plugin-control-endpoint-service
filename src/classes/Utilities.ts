@@ -70,6 +70,7 @@ export default class Utilities {
          alias: obj.alias,
          command: obj.command,
          saveTimeSeries: obj.saveTimeSeries,
+         isActive: obj?.isActive || true
          // config: obj.config
       })
 

@@ -38,7 +38,8 @@ exports.ControlPointObj = Object.freeze({
     command: 0,
     saveTimeSeries: 0,
     config: config_1.getConfig(ControlEndpointDataType_1.ControlEndpointDataType.Float),
-    icon: "device_thermostat"
+    icon: "device_thermostat",
+    isActive: true
 });
 class SpinalControlPoint extends spinal_core_connectorjs_type_1.Model {
     constructor(controlPoint) {

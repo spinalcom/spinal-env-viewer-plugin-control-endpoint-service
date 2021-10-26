@@ -64,6 +64,8 @@ class Utilities {
             alias: obj.alias,
             command: obj.command,
             saveTimeSeries: obj.saveTimeSeries,
+            isActive: (obj === null || obj === void 0 ? void 0 : obj.isActive) || true
+            // config: obj.config
         });
         const childId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({
             type: spinal_model_bmsnetwork_1.SpinalBmsEndpoint.nodeTypeName,
