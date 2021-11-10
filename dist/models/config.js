@@ -23,7 +23,6 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getConfig = exports.NumberConfig = exports.EnumConfig = exports.BoolConfig = void 0;
 const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
 const CalculationRulesDataType_1 = require("../dataTypes/CalculationRulesDataType");
 exports.BoolConfig = {
@@ -41,7 +40,7 @@ exports.NumberConfig = {
     max: { value: 30, color: "#008000" },
     calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference
 };
-const getConfig = function (dataType) {
+exports.getConfig = function (dataType) {
     switch (dataType) {
         case ControlEndpointDataType_1.ControlEndpointDataType.Boolean:
             return exports.BoolConfig;
@@ -56,5 +55,4 @@ const getConfig = function (dataType) {
             return exports.NumberConfig;
     }
 };
-exports.getConfig = getConfig;
 //# sourceMappingURL=config.js.map

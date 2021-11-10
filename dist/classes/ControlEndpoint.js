@@ -1,4 +1,27 @@
 "use strict";
+/*
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ *
+ * This file is part of SpinalCore.
+ *
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ *
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ *
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,7 +32,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ControlEndpointService = void 0;
 const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-service");
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
@@ -162,7 +184,10 @@ class ControlEndpointService {
      * @returns Promise
      */
     getReferencesLinked(nodeId, profilId) {
-        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(nodeId, [contants_1.ROOM_TO_CONTROL_GROUP]).then(profils => {
+        return __awaiter(this, void 0, void 0, function* () {
+            const profils = yield spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(nodeId, [contants_1.ROOM_TO_CONTROL_GROUP]);
+            if (!profilId)
+                return profils;
             const found = profils.find(el => el.referenceId.get() === profilId);
             return found;
         });
@@ -173,9 +198,9 @@ class ControlEndpointService {
      * @param  {string} profilId - controlEndpoint profil id
      * @returns Promise
      */
-    getEndpointsNodeLinked(roomId, profilId) {
+    getEndpointsNodeLinked(roomId, profilId, referenceLinked) {
         return __awaiter(this, void 0, void 0, function* () {
-            const profilFound = yield this.getReferencesLinked(roomId, profilId);
+            const profilFound = referenceLinked || (yield this.getReferencesLinked(roomId, profilId));
             if (profilFound) {
                 return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(profilFound.id.get(), [spinal_model_bmsnetwork_1.SpinalBmsEndpoint.relationName]);
             }
@@ -199,6 +224,18 @@ class ControlEndpointService {
             realNode.info.linkedItems.load((res) => {
                 return resolve(res);
             });
+        });
+    }
+    getControlEndpointLinkedToGroupItem(nodeId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const profils = yield this.getReferencesLinked(nodeId);
+            const promises = profils.map((element) => __awaiter(this, void 0, void 0, function* () {
+                const el = element.get();
+                const endpoints = yield this.getEndpointsNodeLinked(nodeId, el.referenceId, element);
+                el.endpoints = endpoints.map(el => el.get());
+                return el;
+            }));
+            return Promise.all(promises);
         });
     }
     ///////////////////////////////////////////////////////////////////////////////////////////

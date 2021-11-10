@@ -36,5 +36,6 @@ export interface IControlEndpoint {
     command: number;
     saveTimeSeries: number;
     icon: string;
-    config: BoolConfigDataType | EnumConfigDataType | NumberConfigDataType
+    config: BoolConfigDataType | EnumConfigDataType | NumberConfigDataType,
+    isActive?: boolean
 }

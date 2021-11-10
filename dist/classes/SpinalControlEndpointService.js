@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SpinalControlEndpointService = void 0;
 const ControlEnpointsTree_1 = require("./ControlEnpointsTree");
 const ControlEndpoint_1 = require("./ControlEndpoint");
 const contants_1 = require("./contants");

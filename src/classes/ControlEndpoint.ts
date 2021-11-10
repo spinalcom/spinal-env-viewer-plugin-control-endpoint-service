@@ -1,3 +1,27 @@
+/*
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ * 
+ * This file is part of SpinalCore.
+ * 
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ * 
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ * 
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
+
 import { SpinalGraphService, SpinalNodeRef, SPINAL_RELATION_PTR_LST_TYPE } from "spinal-env-viewer-graph-service";
 import { groupManagerService } from 'spinal-env-viewer-plugin-group-manager-service'
 import { Lst, Model, Ptr } from "spinal-core-connectorjs_type";
@@ -176,11 +200,14 @@ export default class ControlEndpointService {
     * @param  {string} profilId
     * @returns Promise
     */
-   public getReferencesLinked(nodeId: string, profilId: string): Promise<any> {
-      return SpinalGraphService.getChildren(nodeId, [ROOM_TO_CONTROL_GROUP]).then(profils => {
-         const found = profils.find(el => el.referenceId.get() === profilId)
-         return found;
-      });
+   public async getReferencesLinked(nodeId: string, profilId?: string): Promise<any> {
+
+      const profils = await SpinalGraphService.getChildren(nodeId, [ROOM_TO_CONTROL_GROUP]);
+
+      if (!profilId) return profils;
+
+      const found = profils.find(el => el.referenceId.get() === profilId)
+      return found;
    }
 
 
@@ -191,8 +218,9 @@ export default class ControlEndpointService {
     * @param  {string} profilId - controlEndpoint profil id
     * @returns Promise
     */
-   public async getEndpointsNodeLinked(roomId: string, profilId: string): Promise<Array<any>> {
-      const profilFound = await this.getReferencesLinked(roomId, profilId);
+   public async getEndpointsNodeLinked(roomId: string, profilId: string, referenceLinked?: SpinalNodeRef): Promise<Array<any>> {
+
+      const profilFound = referenceLinked || await this.getReferencesLinked(roomId, profilId);
 
       if (profilFound) {
          return SpinalGraphService.getChildren(profilFound.id.get(), [SpinalBmsEndpoint.relationName]);
@@ -200,6 +228,8 @@ export default class ControlEndpointService {
 
       return [];
    }
+
+
    /**
     * Get all node linked to the nodeId (control endpoint | id of group)
     * @param  {string} nodeId - controlPointId or groupId
@@ -218,6 +248,19 @@ export default class ControlEndpointService {
             return resolve(res);
          })
       });
+   }
+
+   public async getControlEndpointLinkedToGroupItem(nodeId: string): Promise<any> {
+      const profils = await this.getReferencesLinked(nodeId);
+
+      const promises = profils.map(async element => {
+         const el = element.get()
+         const endpoints = await this.getEndpointsNodeLinked(nodeId, el.referenceId, element);
+         el.endpoints = endpoints.map(el => el.get());
+         return el;
+      })
+
+      return Promise.all(promises);
    }
 
 

@@ -11,4 +11,5 @@ export interface IControlEndpoint {
     saveTimeSeries: number;
     icon: string;
     config: BoolConfigDataType | EnumConfigDataType | NumberConfigDataType;
+    isActive?: boolean;
 }

@@ -23,7 +23,6 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SpinalControlPoint = exports.ControlPointObj = void 0;
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const ControlEndpointType_1 = require("../dataTypes/ControlEndpointType");
 const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
@@ -38,7 +37,8 @@ exports.ControlPointObj = Object.freeze({
     command: 0,
     saveTimeSeries: 0,
     config: config_1.getConfig(ControlEndpointDataType_1.ControlEndpointDataType.Float),
-    icon: "device_thermostat"
+    icon: "device_thermostat",
+    isActive: true
 });
 class SpinalControlPoint extends spinal_core_connectorjs_type_1.Model {
     constructor(controlPoint) {

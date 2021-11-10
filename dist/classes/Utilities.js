@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Utilities = void 0;
 const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-service");
 const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
@@ -64,6 +63,8 @@ class Utilities {
             alias: obj.alias,
             command: obj.command,
             saveTimeSeries: obj.saveTimeSeries,
+            isActive: (obj === null || obj === void 0 ? void 0 : obj.isActive) || true
+            // config: obj.config
         });
         const childId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({
             type: spinal_model_bmsnetwork_1.SpinalBmsEndpoint.nodeTypeName,

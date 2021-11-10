@@ -57,20 +57,21 @@ export default class ControlEndpointService {
      * @param  {string} profilId
      * @returns Promise
      */
-    getReferencesLinked(nodeId: string, profilId: string): Promise<any>;
+    getReferencesLinked(nodeId: string, profilId?: string): Promise<any>;
     /**
      * get All endpoints Nodes linked to roomId and created according the profil selected
      * @param  {string} roomId - nodeId
      * @param  {string} profilId - controlEndpoint profil id
      * @returns Promise
      */
-    getEndpointsNodeLinked(roomId: string, profilId: string): Promise<Array<any>>;
+    getEndpointsNodeLinked(roomId: string, profilId: string, referenceLinked?: SpinalNodeRef): Promise<Array<any>>;
     /**
      * Get all node linked to the nodeId (control endpoint | id of group)
      * @param  {string} nodeId - controlPointId or groupId
      * @returns Promise
      */
     loadElementLinked(nodeId: string): Promise<any>;
+    getControlEndpointLinkedToGroupItem(nodeId: string): Promise<any>;
     getAllProfils(controlPointId: string): Promise<any>;
     controlPointProfilIsAlreadyLinked(profilId: string, groupId: string): Promise<boolean>;
     getContextId(nodeId: string): string;
