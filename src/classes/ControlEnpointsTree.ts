@@ -1,3 +1,27 @@
+/*
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ * 
+ * This file is part of SpinalCore.
+ * 
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ * 
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ * 
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
+
 import { SpinalGraphService, SpinalNodeRef } from "spinal-env-viewer-graph-service";
 import { groupManagerService } from 'spinal-env-viewer-plugin-group-manager-service'
 import { IControlEndpoint } from "../interfaces/ControlEndpoint";
@@ -24,15 +48,11 @@ export default class ControlEnpointsTree {
      * retrieves and returns all contexts of control Endpoint
      * @returns Promise
      */
-    public getContexts(): Promise<Array<SpinalNodeRef>> {
+    public getContexts(): Promise<SpinalNodeRef[]> {
         return groupManagerService.getGroupContexts(CONTROL_POINT_TYPE).then((contexts) => {
             return contexts.map(el => SpinalGraphService.getInfo(el.id));
         })
     }
-
-
-
-
 
     /**
      * This method creates an endpoint control category
@@ -54,7 +74,7 @@ export default class ControlEnpointsTree {
      * @param  {string} nodeId
      * @returns Promise
      */
-    public getCategories(nodeId: string): Promise<Array<SpinalNodeRef>> {
+    public getCategories(nodeId: string): Promise<SpinalNodeRef[]> {
         return groupManagerService.getCategories(nodeId).then((result) => {
             return result.map(el => SpinalGraphService.getInfo(el.id.get()));
         })
@@ -82,10 +102,19 @@ export default class ControlEnpointsTree {
      * @param  {string} nodeId
      * @returns Promise
      */
-    public getGroups(nodeId: string): Promise<Array<SpinalNodeRef>> {
+    public getGroups(nodeId: string): Promise<SpinalNodeRef[]> {
         return groupManagerService.getGroups(nodeId).then((result) => {
             return result.map(el => SpinalGraphService.getInfo(el.id.get()));
         })
+    }
+
+    /**
+     * get All control endpoint node linked to group selected
+     * @param  {string} groupId
+     * @returns Promise
+     */
+    public getControlPoint(groupId: string): Promise<SpinalNodeRef[]> {
+        return groupManagerService.getElementsLinkedToGroup(groupId);
     }
 
 
@@ -109,23 +138,10 @@ export default class ControlEnpointsTree {
       * @param  {any} controlPointProfil
       * @returns Promise of new groupId and old groupId
       */
-    public createControlPointProfil(contextId: string, groupId: string, controlPointProfil: { name: string; endpoints: Array<IControlEndpoint> } = { name: "unknow", endpoints: [] }): Promise<{ old_group: string, newGroup: string }> {
+    public createControlPointProfil(contextId: string, groupId: string, controlPointProfil: { name: string; endpoints: IControlEndpoint[] } = { name: "unknow", endpoints: [] }): Promise<{ old_group: string, newGroup: string }> {
         const profilNodeId = SpinalGraphService.createNode({ name: controlPointProfil.name, type: CONTROL_POINT_TYPE }, new Lst(controlPointProfil.endpoints));
         return groupManagerService.linkElementToGroup(contextId, groupId, profilNodeId);
     }
-
-
-    /**
-     * get All control endpoint node linked to group selected
-     * @param  {string} groupId
-     * @returns Promise
-     */
-    public getControlPoint(groupId: string): Promise<Array<SpinalNodeRef>> {
-        return groupManagerService.getElementsLinkedToGroup(groupId);
-    }
-
-
-
 
 }
 

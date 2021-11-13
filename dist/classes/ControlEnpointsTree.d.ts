@@ -12,7 +12,7 @@ export default class ControlEnpointsTree {
      * retrieves and returns all contexts of control Endpoint
      * @returns Promise
      */
-    getContexts(): Promise<Array<SpinalNodeRef>>;
+    getContexts(): Promise<SpinalNodeRef[]>;
     /**
      * This method creates an endpoint control category
      * @param  {string} contextId
@@ -26,7 +26,7 @@ export default class ControlEnpointsTree {
      * @param  {string} nodeId
      * @returns Promise
      */
-    getCategories(nodeId: string): Promise<Array<SpinalNodeRef>>;
+    getCategories(nodeId: string): Promise<SpinalNodeRef[]>;
     /**
      * This method creates an endpoint control group
      * @param  {string} contextId
@@ -41,7 +41,13 @@ export default class ControlEnpointsTree {
      * @param  {string} nodeId
      * @returns Promise
      */
-    getGroups(nodeId: string): Promise<Array<SpinalNodeRef>>;
+    getGroups(nodeId: string): Promise<SpinalNodeRef[]>;
+    /**
+     * get All control endpoint node linked to group selected
+     * @param  {string} groupId
+     * @returns Promise
+     */
+    getControlPoint(groupId: string): Promise<SpinalNodeRef[]>;
     /**
      * checks if the id passed in parameter is a group of control Endpoint
      * @param  {string} id
@@ -57,16 +63,10 @@ export default class ControlEnpointsTree {
       */
     createControlPointProfil(contextId: string, groupId: string, controlPointProfil?: {
         name: string;
-        endpoints: Array<IControlEndpoint>;
+        endpoints: IControlEndpoint[];
     }): Promise<{
         old_group: string;
         newGroup: string;
     }>;
-    /**
-     * get All control endpoint node linked to group selected
-     * @param  {string} groupId
-     * @returns Promise
-     */
-    getControlPoint(groupId: string): Promise<Array<SpinalNodeRef>>;
 }
 export { ControlEnpointsTree };

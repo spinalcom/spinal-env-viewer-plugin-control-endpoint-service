@@ -1,4 +1,27 @@
 "use strict";
+/*
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ *
+ * This file is part of SpinalCore.
+ *
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ *
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ *
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-service");
 const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-viewer-plugin-group-manager-service");
@@ -75,6 +98,14 @@ class ControlEnpointsTree {
         });
     }
     /**
+     * get All control endpoint node linked to group selected
+     * @param  {string} groupId
+     * @returns Promise
+     */
+    getControlPoint(groupId) {
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getElementsLinkedToGroup(groupId);
+    }
+    /**
      * checks if the id passed in parameter is a group of control Endpoint
      * @param  {string} id
      * @returns boolean
@@ -94,14 +125,6 @@ class ControlEnpointsTree {
     createControlPointProfil(contextId, groupId, controlPointProfil = { name: "unknow", endpoints: [] }) {
         const profilNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({ name: controlPointProfil.name, type: contants_1.CONTROL_POINT_TYPE }, new spinal_core_connectorjs_type_1.Lst(controlPointProfil.endpoints));
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.linkElementToGroup(contextId, groupId, profilNodeId);
-    }
-    /**
-     * get All control endpoint node linked to group selected
-     * @param  {string} groupId
-     * @returns Promise
-     */
-    getControlPoint(groupId) {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getElementsLinkedToGroup(groupId);
     }
 }
 exports.default = ControlEnpointsTree;

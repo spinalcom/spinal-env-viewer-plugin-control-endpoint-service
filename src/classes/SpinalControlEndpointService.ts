@@ -1,3 +1,27 @@
+/*
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ * 
+ * This file is part of SpinalCore.
+ * 
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ * 
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ * 
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
+
 
 import { ControlEnpointsTree } from "./ControlEnpointsTree";
 import { ControlEndpointService } from "./ControlEndpoint";
@@ -42,44 +66,16 @@ class SpinalControlEndpointService {
       this.listenUnLinkItemToGroupEvent();
    }
 
-   private listenLinkItemToGroupEvent() {
+   private listenLinkItemToGroupEvent(): void {
 
-      spinalEventEmitter.on(groupManagerService.constants.ELEMENT_LINKED_TO_GROUP_EVENT, async (data) => {
-         console.log("item linked To group event");
-
-         const profilsLinked: any = await this.getElementLinked(data.groupId);
-
-         const promises = profilsLinked.map(async (profilModel) => {
-            const profil = profilModel.get();
-            const controlPointContextId = this.getContextId(profil.id);
-            const controlPoints = await this.getControlPointProfil(controlPointContextId, profil.id);
-            const nodeId = await Utilities.createNode(controlPoints.name, controlPointContextId, profil.id, controlPoints.endpoints.get());
-            return SpinalGraphService.addChildInContext(data.elementId, nodeId, controlPointContextId, ROOM_TO_CONTROL_GROUP, SPINAL_RELATION_PTR_LST_TYPE)
-         })
-
-         return Promise.all(promises);
+      spinalEventEmitter.on(groupManagerService.constants.ELEMENT_LINKED_TO_GROUP_EVENT, ({ groupId, elementId }) => {
+         this.linkControlPointToNewGroupItem(groupId, elementId);
       })
    }
 
-   private listenUnLinkItemToGroupEvent() {
-      spinalEventEmitter.on(groupManagerService.constants.ELEMENT_UNLINKED_TO_GROUP_EVENT, async (data) => {
-         console.log("item unlinked To group event");
-
-         const profilsLinkedModel = await this.getElementLinked(data.groupId);
-         const elementProfilsModel = SpinalGraphService.getChildren(data.elementId, [ROOM_TO_CONTROL_GROUP]);
-
-         const profilsLinked = profilsLinkedModel.map((el: any) => el.get());
-         const elementProfils = (await elementProfilsModel).map(el => el.get());
-
-         const promises = elementProfils.map((profil) => {
-            const found = profilsLinked.find(el => el.id === profil.referenceId);
-            if (found) {
-               return SpinalGraphService.removeChild(data.elementId, profil.id, ROOM_TO_CONTROL_GROUP, SPINAL_RELATION_PTR_LST_TYPE);
-            }
-            return Promise.resolve(false);
-         })
-
-         return Promise.all(promises);
+   private listenUnLinkItemToGroupEvent(): void {
+      spinalEventEmitter.on(groupManagerService.constants.ELEMENT_UNLINKED_TO_GROUP_EVENT, ({ groupId, elementId }) => {
+         this.unLinkControlPointToGroupItem(groupId, elementId);
       })
    }
 }

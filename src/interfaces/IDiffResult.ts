@@ -1,20 +1,19 @@
-"use strict";
 /*
- * Copyright 2020 SpinalCom - www.spinalcom.com
- *
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ * 
  * This file is part of SpinalCore.
- *
+ * 
  * Please read all of the following terms and conditions
  * of the Free Software license Agreement ("Agreement")
  * carefully.
- *
+ * 
  * This Agreement is a legally binding contract between
  * the Licensee (as defined below) and SpinalCom that
  * sets forth the terms and conditions that govern your
  * use of the Program. By installing and/or using the
  * Program, you agree to abide by all the terms and
  * conditions stated or referenced herein.
- *
+ * 
  * If you do not agree to abide by these terms and
  * conditions, do not demonstrate your acceptance and do
  * not install or use the Program.
@@ -22,8 +21,11 @@
  * with this file. If not, see
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-class IControlEndpointModel extends spinal.Model {
+
+import { IControlEndpoint } from "./ControlEndpoint";
+
+export interface IDiffResult {
+   toCreate: IControlEndpoint[];
+   toUpdate: IControlEndpoint[];
+   toRemove: IControlEndpoint[];
 }
-exports.IControlEndpointModel = IControlEndpointModel;
-//# sourceMappingURL=ControlEndpoint.js.map

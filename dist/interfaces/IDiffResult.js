@@ -1,6 +1,6 @@
 "use strict";
 /*
- * Copyright 2020 SpinalCom - www.spinalcom.com
+ * Copyright 2021 SpinalCom - www.spinalcom.com
  *
  * This file is part of SpinalCore.
  *
@@ -23,7 +23,4 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-class IControlEndpointModel extends spinal.Model {
-}
-exports.IControlEndpointModel = IControlEndpointModel;
-//# sourceMappingURL=ControlEndpoint.js.map
+//# sourceMappingURL=IDiffResult.js.map

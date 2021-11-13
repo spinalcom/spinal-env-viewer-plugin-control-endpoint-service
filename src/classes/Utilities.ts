@@ -1,21 +1,47 @@
-import { SpinalGraphService, SpinalNodeRef, SPINAL_RELATION_PTR_LST_TYPE } from "spinal-env-viewer-graph-service";
+/*
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ * 
+ * This file is part of SpinalCore.
+ * 
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ * 
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ * 
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
+
+import { SpinalGraphService, SpinalNode, SpinalNodeRef, SPINAL_RELATION_PTR_LST_TYPE } from "spinal-env-viewer-graph-service";
 import { SpinalBmsEndpoint, SpinalBmsEndpointGroup, NetworkService } from "spinal-model-bmsnetwork";
 import { Lst, Model, Ptr } from "spinal-core-connectorjs_type";
 import { groupManagerService } from 'spinal-env-viewer-plugin-group-manager-service'
 import { ControlEndpointDataType } from "../dataTypes/ControlEndpointDataType";
 import { ControlEndpointType } from "../dataTypes/ControlEndpointType";
 import { CONTROL_POINT_TYPE, ROOM_TO_CONTROL_GROUP } from "./contants";
+import { IControlEndpoint } from "../interfaces/ControlEndpoint";
+import { IDiffResult } from "../interfaces/IDiffResult";
+import { BoolConfigDataType, EnumConfigDataType, NumberConfigDataType } from "../dataTypes/ControlConfigDataType";
 
 const netWorkService = new NetworkService();
 
-export default class Utilities {
-   constructor() { }
+export default abstract class Utilities {
 
    public static getGroups(nodeId: string): Promise<SpinalNodeRef> {
       return groupManagerService.getGroups(nodeId);
    }
 
-   public static async getGroupItems(groupId: string): Promise<Array<any>> {
+   public static async getGroupItems(groupId: string): Promise<SpinalNodeRef[]> {
 
       // const groups = await groupManagerService.getGroups(nodeId);
       // const promises = groups.map(el => groupManagerService.getElementsLinkedToGroup(el.id.get()))
@@ -27,7 +53,7 @@ export default class Utilities {
       return groupManagerService.getElementsLinkedToGroup(groupId);
    }
 
-   public static async createNode(groupName: string, controlPointContextId: string, controlPointId: string, controlPoints: Array<any>): Promise<string> {
+   public static async createNode(groupName: string, controlPointContextId: string, controlPointId: string, controlPoints: IControlEndpoint[]): Promise<string> {
       const groupNodeId = SpinalGraphService.createNode({
          name: groupName,
          referenceId: controlPointId,
@@ -43,7 +69,7 @@ export default class Utilities {
 
    }
 
-   public static async linkEndpointToProfil(controlPointContextId: string, groupNodeId: string, endpoint: any) {
+   public static async linkEndpointToProfil(controlPointContextId: string, groupNodeId: string, endpoint: IControlEndpoint): Promise<string> {
       // const endpoint = element.get();
       endpoint["currentValue"] = this.getCurrentValue(endpoint.dataType);
       const endpointObj = this.createEndpointNode(endpoint);
@@ -55,7 +81,7 @@ export default class Utilities {
       return endpointObj.childId;
    }
 
-   public static createEndpointNode(obj: any): { childId: string, res: SpinalBmsEndpoint } {
+   public static createEndpointNode(obj: IControlEndpoint): { childId: string, res: SpinalBmsEndpoint } {
       const res = new SpinalBmsEndpoint(
          obj.name,
          obj.path,
@@ -109,7 +135,7 @@ export default class Utilities {
    }
 
 
-   public static isLinked(items: typeof Lst, id: string): boolean {
+   public static isLinked(items: spinal.Lst<SpinalNode<any>>, id: string): boolean {
 
       for (let index = 0; index < items.length; index++) {
          const nodeId = items[index].getId().get();
@@ -122,9 +148,7 @@ export default class Utilities {
 
 
 
-
-
-   public static getDifference(oldEndpoint: Array<any>, newEndpoints: Array<any>) {
+   public static getDifference(oldEndpoint: Array<IControlEndpoint>, newEndpoints: Array<IControlEndpoint>): IDiffResult {
       const toCreate = newEndpoints.filter(el => {
          const found = oldEndpoint.find(el2 => el2.id === el.id);
          return typeof found === "undefined";
@@ -144,7 +168,7 @@ export default class Utilities {
       }
    }
 
-   public static isUpdated(controlPoint, oldEndpoint) {
+   public static isUpdated(controlPoint: IControlEndpoint, oldEndpoint: Array<IControlEndpoint>): boolean {
       const found = oldEndpoint.find(el => el.id === controlPoint.id);
       if (!found) return false;
 
@@ -159,49 +183,52 @@ export default class Utilities {
    }
 
 
-   public static configAreEquals(config1, config2) {
+   public static configAreEquals(config1: BoolConfigDataType | EnumConfigDataType | NumberConfigDataType, config2: BoolConfigDataType | EnumConfigDataType | NumberConfigDataType): boolean {
 
-      const isEnum = typeof config1.enumeration !== "undefined";
+      const config1HasEnum = 'enumeration' in config1;
 
-      if (isEnum) {
-         const enum2 = typeof config2.enumeration !== "undefined";
-         if (!enum2) return false;
-         if (config1.enumeration.length !== config2.enumeration.length) return false;
+      if (config1HasEnum) {
+         const config2HasEnum = 'enumeration' in config2;
+         if (!config2HasEnum) return false;
 
-         for (let index = 0; index < config1.enumeration.length; index++) {
-            const el1 = config1.enumeration[index]
-            const el2 = config2.enumeration[index]
+         const firstConfig = <EnumConfigDataType>config1;
+         const secondConfig = <EnumConfigDataType>config2;
+
+         if (firstConfig.enumeration.length !== secondConfig.enumeration.length) return false;
+
+         for (let index = 0; index < firstConfig.enumeration.length; index++) {
+            const el1 = firstConfig.enumeration[index];
+            const el2 = secondConfig.enumeration[index];
             if (!this.objectsAreEquals(el1, el2)) {
-               return false
-            }
-         }
-
-         return true;
-
-      } else if (!isEnum) {
-         const keys1 = Object.keys(config1);
-         const keys2 = Object.keys(config2);
-
-         if (keys1.length !== keys2.length) {
-            return false;
-         }
-
-         for (const key of keys1) {
-            if (typeof config1[key] !== "object" && config1[key] !== config2[key]) {
-               return false
-            }
-            else if (!this.objectsAreEquals(config1[key], config2[key])) {
                return false;
             }
          }
 
          return true;
+
       }
 
+      const keys1 = Object.keys(config1);
+      const keys2 = Object.keys(config2);
+
+      if (keys1.length !== keys2.length) {
+         return false;
+      }
+
+      for (const key of keys1) {
+         if (typeof config1[key] !== "object" && config1[key] !== config2[key]) {
+            return false
+         }
+         else if (!this.objectsAreEquals(config1[key], config2[key])) {
+            return false;
+         }
+      }
+
+      return true;
    }
 
 
-   public static objectsAreEquals(object1, object2) {
+   public static objectsAreEquals(object1: { [key: string]: any }, object2: { [key: string]: any }): boolean {
       const keys1 = Object.keys(object1);
       const keys2 = Object.keys(object2);
 
@@ -219,7 +246,7 @@ export default class Utilities {
    }
 
 
-   public static create(controlPointContextId, newList, profils, endpointsLst) {
+   public static create(controlPointContextId: string, newList: Array<IControlEndpoint>, profils: SpinalNodeRef[], endpointsLst): Promise<string[][]> {
       const promises = newList.map(endpoint => {
          endpointsLst.push(endpoint);
          const promises2 = profils.map(async profil => {
@@ -229,10 +256,11 @@ export default class Utilities {
          return Promise.all(promises2);
       });
 
-      return Promise.all(promises);
+      return Promise.all(promises)
    }
 
-   public static update(newList, profils, endpointsLst) {
+
+   public static update(newList: Array<IControlEndpoint>, profils: SpinalNodeRef[], endpointsLst): Promise<void[][]> {
       const promises = newList.map(element => {
          const index = this.getIndex(endpointsLst, element.id);
          this.setProfilValue(element, endpointsLst[index]);
@@ -246,7 +274,7 @@ export default class Utilities {
       return Promise.all(promises)
    }
 
-   public static delete(newList, profils, endpointsLst) {
+   public static delete(newList: Array<IControlEndpoint>, profils: SpinalNodeRef[], endpointsLst): Promise<boolean[][]> {
       const promises = newList.map(element => {
          const index = this.getIndex(endpointsLst, element.id);
          endpointsLst.splice(index);
@@ -261,13 +289,6 @@ export default class Utilities {
       return Promise.all(promises);
    }
 
-
-
-
-
-
-
-
    public static async modEndpoint(endpointId: string, newProfil: { name: string;[key: string]: any }): Promise<void> {
       const info = SpinalGraphService.getInfo(endpointId);
       const realNode = SpinalGraphService.getRealNode(endpointId)
@@ -281,14 +302,14 @@ export default class Utilities {
 
    }
 
-   public static setProfilValue(newProfil, oldProfil) {
+   public static setProfilValue(newProfil: { [key: string]: any }, oldProfil: { [key: string]: any }): void {
       for (const key of Object.keys(newProfil)) {
          if (oldProfil[key]) oldProfil[key].set(newProfil[key])
          else oldProfil.add_attr({ [key]: newProfil[key] });
       }
    }
 
-   public static async getEndpointByType(profilId, endpointId) {
+   public static async getEndpointByType(profilId: string, endpointId: string): Promise<string> {
       const endpoints = await this.getProfilEndpoints(profilId);
       const found = endpoints.find(el => el.endpointId.get() === endpointId);
 
@@ -297,11 +318,11 @@ export default class Utilities {
       }
    }
 
-   public static getProfilEndpoints(profilId) {
+   public static getProfilEndpoints(profilId: string): Promise<SpinalNodeRef[]> {
       return SpinalGraphService.getChildren(profilId, [SpinalBmsEndpoint.relationName]);
    }
 
-   public static getIndex(liste, id) {
+   public static getIndex(liste: SpinalNodeRef[], id: string): number {
       for (let index = 0; index < liste.length; index++) {
          const elementId = liste[index].id.get();
          if (elementId === id) return index;
@@ -310,7 +331,7 @@ export default class Utilities {
       return -1;
    }
 
-   public static async linkProfilToGroupItemIfNotExist(itemId: string, controlPointContextId, controlPointId, controlPoints: { name: string; endpoints: any }) {
+   public static async linkProfilToGroupItemIfNotExist(itemId: string, controlPointContextId: string, controlPointId: string, controlPoints: { name: string; endpoints: any }): Promise<SpinalNode<any>> {
       const nodeId = await this.createNode(controlPoints.name, controlPointContextId, controlPointId, controlPoints.endpoints.get());
 
       const children = await SpinalGraphService.getChildren(itemId, [ROOM_TO_CONTROL_GROUP]);

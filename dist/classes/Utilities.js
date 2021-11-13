@@ -1,4 +1,27 @@
 "use strict";
+/*
+ * Copyright 2021 SpinalCom - www.spinalcom.com
+ *
+ * This file is part of SpinalCore.
+ *
+ * Please read all of the following terms and conditions
+ * of the Free Software license Agreement ("Agreement")
+ * carefully.
+ *
+ * This Agreement is a legally binding contract between
+ * the Licensee (as defined below) and SpinalCom that
+ * sets forth the terms and conditions that govern your
+ * use of the Program. By installing and/or using the
+ * Program, you agree to abide by all the terms and
+ * conditions stated or referenced herein.
+ *
+ * If you do not agree to abide by these terms and
+ * conditions, do not demonstrate your acceptance and do
+ * not install or use the Program.
+ * You should have received a copy of the license along
+ * with this file. If not, see
+ * <http://resources.spinalcom.com/licenses.pdf>.
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -18,7 +41,6 @@ const ControlEndpointType_1 = require("../dataTypes/ControlEndpointType");
 const contants_1 = require("./contants");
 const netWorkService = new spinal_model_bmsnetwork_1.NetworkService();
 class Utilities {
-    constructor() { }
     static getGroups(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroups(nodeId);
     }
@@ -132,38 +154,38 @@ class Utilities {
         return true;
     }
     static configAreEquals(config1, config2) {
-        const isEnum = typeof config1.enumeration !== "undefined";
-        if (isEnum) {
-            const enum2 = typeof config2.enumeration !== "undefined";
-            if (!enum2)
+        const config1HasEnum = 'enumeration' in config1;
+        if (config1HasEnum) {
+            const config2HasEnum = 'enumeration' in config2;
+            if (!config2HasEnum)
                 return false;
-            if (config1.enumeration.length !== config2.enumeration.length)
+            const firstConfig = config1;
+            const secondConfig = config2;
+            if (firstConfig.enumeration.length !== secondConfig.enumeration.length)
                 return false;
-            for (let index = 0; index < config1.enumeration.length; index++) {
-                const el1 = config1.enumeration[index];
-                const el2 = config2.enumeration[index];
+            for (let index = 0; index < firstConfig.enumeration.length; index++) {
+                const el1 = firstConfig.enumeration[index];
+                const el2 = secondConfig.enumeration[index];
                 if (!this.objectsAreEquals(el1, el2)) {
                     return false;
                 }
             }
             return true;
         }
-        else if (!isEnum) {
-            const keys1 = Object.keys(config1);
-            const keys2 = Object.keys(config2);
-            if (keys1.length !== keys2.length) {
+        const keys1 = Object.keys(config1);
+        const keys2 = Object.keys(config2);
+        if (keys1.length !== keys2.length) {
+            return false;
+        }
+        for (const key of keys1) {
+            if (typeof config1[key] !== "object" && config1[key] !== config2[key]) {
                 return false;
             }
-            for (const key of keys1) {
-                if (typeof config1[key] !== "object" && config1[key] !== config2[key]) {
-                    return false;
-                }
-                else if (!this.objectsAreEquals(config1[key], config2[key])) {
-                    return false;
-                }
+            else if (!this.objectsAreEquals(config1[key], config2[key])) {
+                return false;
             }
-            return true;
         }
+        return true;
     }
     static objectsAreEquals(object1, object2) {
         const keys1 = Object.keys(object1);

@@ -22,11 +22,10 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 
-import { SpinalGraphService, SpinalNodeRef, SPINAL_RELATION_PTR_LST_TYPE } from "spinal-env-viewer-graph-service";
-import { groupManagerService } from 'spinal-env-viewer-plugin-group-manager-service'
+import { SpinalGraphService, SpinalNodeRef, SpinalNode, SPINAL_RELATION_PTR_LST_TYPE } from "spinal-env-viewer-graph-service";
 import { Lst, Model, Ptr } from "spinal-core-connectorjs_type";
 import { SpinalBmsEndpoint } from "spinal-model-bmsnetwork";
-import { IControlEndpoint } from "../interfaces/ControlEndpoint";
+import { IControlEndpoint, IControlEndpointModel } from "../interfaces/ControlEndpoint";
 import { Utilities } from "./Utilities";
 
 import { CONTROL_POINT_TYPE, ROOM_TO_CONTROL_GROUP } from "./contants";
@@ -55,7 +54,7 @@ export default class ControlEndpointService {
      * @param  {string} controlPointId
      * @returns Promise
      */
-   public async getControlPointProfil(contextId: string, controlPointId: string): Promise<{ name: string, endpoints: any }> {
+   public async getControlPointProfil(contextId: string, controlPointId: string): Promise<{ name: string, endpoints: spinal.Lst<IControlEndpointModel> }> {
       let realNode = SpinalGraphService.getRealNode(controlPointId);
 
       if (typeof realNode === "undefined") {
@@ -94,6 +93,8 @@ export default class ControlEndpointService {
       const promises = groups.map(async group => {
          try {
             await this._LinkNode(group.id.get(), controlPointContextId, controlPointId, controlPoints);
+            await this.saveItemLinked(controlPointId, [group.id.get()]);
+            await this.saveItemLinked(group.id.get(), [controlPointId]);
             return group;
          } catch (error) {
             console.error(error);
@@ -102,28 +103,36 @@ export default class ControlEndpointService {
 
       })
 
-      return Promise.all(promises).then((result) => {
-         result.map((group: any) => {
-            this.saveItemLinked(controlPointId, [group.id.get()]);
-            this.saveItemLinked(group.id.get(), [controlPointId]);
-         })
+      return Promise.all(promises)
+      // .then((result) => {
+      //    result.map((group: any) => {
 
-         return result.map((el: any) => SpinalGraphService.getInfo(el.id.get()));
-      })
+      //    })
+
+      //    return result.map((el: any) => SpinalGraphService.getInfo(el.id.get()));
+      // })
    }
 
-   public async _LinkNode(groupId: string, controlPointContextId: string, controlPointId: string, controlPoints) {
+   /**
+    * unlink the control point to a group and his items
+    * @param  {string} groupId
+    * @param  {string} controlPointProfilId
+    * @returns Promise
+    */
+   public async unLinkControlPointToGroup(groupId: string, controlPointProfilId: string): Promise<boolean[]> {
+      const groupItems = await Utilities.getGroupItems(groupId);
 
-      const isLinked = await this.controlPointProfilIsAlreadyLinked(controlPointId, groupId);
-      if (isLinked) return;
-
-      const items = await Utilities.getGroupItems(groupId);
-      const promises = items.map(async el => {
-         return Utilities.linkProfilToGroupItemIfNotExist(el.id.get(), controlPointContextId, controlPointId, controlPoints);
+      const promises = groupItems.map(async element => {
+         try {
+            return this.unLinkControlPointToGroupItem(groupId, element.id.get(), controlPointProfilId);
+         } catch (error) {
+            console.error(error);
+            return false;
+         }
       })
 
-      return Promise.all(promises).then((result) => {
-         return result.map(el => SpinalGraphService.getInfo(el.getId().get()));
+      return Promise.all(promises).then(async () => {
+         return this.removeItemSaved(groupId, controlPointProfilId);
       })
    }
 
@@ -134,7 +143,7 @@ export default class ControlEndpointService {
     * @param  {Array} values
     * @returns Promise
     */
-   public async editControlPointProfil(contextId: string, controlPointId: string, values: Array<IControlEndpoint>): Promise<{ name: string, endpoints: any }> {
+   public async editControlPointProfil(contextId: string, controlPointId: string, values: IControlEndpoint[]): Promise<{ name: string, endpoints: spinal.Lst<IControlEndpointModel> }> {
       const res = await this.getControlPointProfil(contextId, controlPointId);
       // res.endpoints.set(values);
       const diffs = Utilities.getDifference(res.endpoints.get(), values);
@@ -155,7 +164,7 @@ export default class ControlEndpointService {
     * @param  {string} controlProfilId
     * @returns Promise
     */
-   public async getElementLinked(controlProfilId: string): Promise<Array<typeof Model>> {
+   public async getElementLinked(controlProfilId: string): Promise<Array<SpinalNodeRef>> {
 
       return this.loadElementLinked(controlProfilId).then((res) => {
          if (!res) return [];
@@ -177,12 +186,12 @@ export default class ControlEndpointService {
     * @param  {string} groupId
     * @returns Promise
     */
-   public async getDataFormated(groupId: string): Promise<any> {
+   public async getDataFormated(groupId: string): Promise<{ id: string; name: string; type: string; endpointProfils: IControlEndpoint[]; }[]> {
       const elementLinked = await this.getElementLinked(groupId);
       const rooms = await Utilities.getGroupItems(groupId);
 
       const promises = elementLinked.map(async element => {
-         const el = (<any>element).get();
+         const el = element.get();
          const contextId = this.getContextId(el.id);
          const controlPointProfil = await this.getControlPointProfil(contextId, el.id);
          el['endpointProfils'] = controlPointProfil.endpoints.get();
@@ -200,7 +209,7 @@ export default class ControlEndpointService {
     * @param  {string} profilId
     * @returns Promise
     */
-   public async getReferencesLinked(nodeId: string, profilId?: string): Promise<any> {
+   public async getReferencesLinked(nodeId: string, profilId?: string): Promise<SpinalNodeRef | SpinalNodeRef[]> {
 
       const profils = await SpinalGraphService.getChildren(nodeId, [ROOM_TO_CONTROL_GROUP]);
 
@@ -218,9 +227,10 @@ export default class ControlEndpointService {
     * @param  {string} profilId - controlEndpoint profil id
     * @returns Promise
     */
-   public async getEndpointsNodeLinked(roomId: string, profilId: string, referenceLinked?: SpinalNodeRef): Promise<Array<any>> {
+   public async getEndpointsNodeLinked(roomId: string, profilId: string, referenceLinked?: SpinalNodeRef): Promise<SpinalNodeRef[]> {
 
-      const profilFound = referenceLinked || await this.getReferencesLinked(roomId, profilId);
+      const found = referenceLinked || await this.getReferencesLinked(roomId, profilId);
+      let profilFound = Array.isArray(found) ? found[0] : found;
 
       if (profilFound) {
          return SpinalGraphService.getChildren(profilFound.id.get(), [SpinalBmsEndpoint.relationName]);
@@ -235,7 +245,7 @@ export default class ControlEndpointService {
     * @param  {string} nodeId - controlPointId or groupId
     * @returns Promise
     */
-   public loadElementLinked(nodeId: string): Promise<any> {
+   public loadElementLinked(nodeId: string): Promise<spinal.Lst<SpinalNode<any>>> {
       const realNode = SpinalGraphService.getRealNode(nodeId);
       if (!realNode || !realNode.info || !realNode.info.linkedItems) {
          let res = new Lst();
@@ -250,14 +260,75 @@ export default class ControlEndpointService {
       });
    }
 
-   public async getControlEndpointLinkedToGroupItem(nodeId: string): Promise<any> {
-      const profils = await this.getReferencesLinked(nodeId);
+   /**
+    * This method takes as parameter a group item's id and return all control endpoints classify by profil 
+    * @param  {string} groupItemId
+    * @returns Promise
+    */
+   public async getControlEndpointLinkedToGroupItem(groupItemId: string): Promise<{ id: string; name: string; type: string; endpoints: { id: string; name: string; type: string; }[] }[]> {
+      const profils = await this.getReferencesLinked(groupItemId);
 
       const promises = profils.map(async element => {
          const el = element.get()
-         const endpoints = await this.getEndpointsNodeLinked(nodeId, el.referenceId, element);
+         const endpoints = await this.getEndpointsNodeLinked(groupItemId, el.referenceId, element);
          el.endpoints = endpoints.map(el => el.get());
          return el;
+      })
+
+      return Promise.all(promises);
+   }
+
+   /**
+   * get All endpoints linked to roomId and created according the profil selected
+   * @param  {string} roomId - nodeId
+   * @param  {string} profilId - controlEndpoint profil id
+   * @returns Promise
+   */
+   public async getEndpointsLinked(nodeId: string, profilId: string): Promise<spinal.Model[]> {
+      const endpointsInfo = await this.getEndpointsNodeLinked(nodeId, profilId);
+      const promises = endpointsInfo.map(el => el.element.load());
+      return Promise.all(promises);
+   }
+
+   /**
+    * This method allows to create and link endpoints to group item according the profil linked to group 
+    * @param  {string} groupId
+    * @param  {string} elementId
+    * @returns Promise
+    */
+   public async linkControlPointToNewGroupItem(groupId: string, elementId: string, controlPointProfilId?: string): Promise<SpinalNode<any>[]> {
+      const profilsLinked = controlPointProfilId ? [SpinalGraphService.getInfo(controlPointProfilId)] : await this.getElementLinked(groupId);
+
+      const promises = profilsLinked.map(async (profilModel) => {
+         const profil = profilModel.get();
+         const controlPointContextId = this.getContextId(profil.id);
+         const controlPoints = await this.getControlPointProfil(controlPointContextId, profil.id);
+         const nodeId = await Utilities.createNode(controlPoints.name, controlPointContextId, profil.id, controlPoints.endpoints.get());
+         return SpinalGraphService.addChildInContext(elementId, nodeId, controlPointContextId, ROOM_TO_CONTROL_GROUP, SPINAL_RELATION_PTR_LST_TYPE)
+      })
+
+      return Promise.all(promises);
+   }
+
+   /**
+    * This method allows to ulink endpoints to group item according the profil linked to group
+    * @param  {string} groupId
+    * @param  {string} elementId
+    * @returns Promise
+    */
+   public async unLinkControlPointToGroupItem(groupId: string, elementId: string, controlPointProfilId?: string): Promise<boolean[]> {
+      const profils = controlPointProfilId ? [SpinalGraphService.getInfo(controlPointProfilId)] : await this.getElementLinked(groupId);
+      const elementProfils = await SpinalGraphService.getChildren(elementId, [ROOM_TO_CONTROL_GROUP]);
+
+      // const profilsLinked = profilsLinkedModel.map((el: any) => el.get());
+      // const elementProfils = (await elementProfilsModel).map(el => el.get());
+
+      const promises = profils.map((profil) => {
+         const found = elementProfils.find(el => [el.referenceId.get(), el.id.get()].indexOf(profil.id.get()) !== -1);
+         if (found) {
+            return SpinalGraphService.removeChild(elementId, found.id.get(), ROOM_TO_CONTROL_GROUP, SPINAL_RELATION_PTR_LST_TYPE);
+         }
+         return Promise.resolve(false);
       })
 
       return Promise.all(promises);
@@ -269,7 +340,7 @@ export default class ControlEndpointService {
    ///////////////////////////////////////////////////////////////////////////////////////////
 
 
-   public async getAllProfils(controlPointId: string) {
+   public async getAllProfils(controlPointId: string): Promise<SpinalNodeRef[]> {
       const elementsLinked = await this.getElementLinked(controlPointId);
       const promises = [];
 
@@ -277,8 +348,8 @@ export default class ControlEndpointService {
          promises.push(Utilities.getGroupItems((<any>group).id.get()))
       }
 
-      return Promise.all(promises).then((roomsArrays) => {
-         const rooms = (<any>roomsArrays).flat();
+      return Promise.all(promises).then((roomsArrays: any) => {
+         const rooms = roomsArrays.flat();
          const promises2 = rooms.map(el => this.getReferencesLinked(el.id.get(), controlPointId));
          return Promise.all(promises2).then((result) => {
             return (<any>result).flat()
@@ -293,7 +364,7 @@ export default class ControlEndpointService {
       return typeof found !== "undefined";
    }
 
-   public getContextId(nodeId: string) {
+   public getContextId(nodeId: string): string {
       const realNode = SpinalGraphService.getRealNode(nodeId);
       if (realNode.contextIds) {
          const contextIds = realNode.contextIds.values();
@@ -303,7 +374,10 @@ export default class ControlEndpointService {
       }
    }
 
-   public formatRooms(profilId: string, rooms: Array<typeof Model>) {
+   public formatRooms(profilId: string, rooms: SpinalNodeRef[]): Promise<{
+      id: string; type: string; name: string; bimObjects: [];
+      endpoints: IControlEndpointModel[];
+   }[]> {
       const promises = rooms.map(async (room: any) => {
          let obj = room.get();
          obj['bimObjects'] = []
@@ -314,24 +388,7 @@ export default class ControlEndpointService {
       return Promise.all(promises);
    }
 
-
-
-
-   /**
-    * get All endpoints linked to roomId and created according the profil selected
-    * @param  {string} roomId - nodeId
-    * @param  {string} profilId - controlEndpoint profil id
-    * @returns Promise
-    */
-   public async getEndpointsLinked(nodeId: string, profilId: string): Promise<Array<any>> {
-      const endpointsInfo = await this.getEndpointsNodeLinked(nodeId, profilId);
-      const promises = endpointsInfo.map(el => el.element.load());
-      return Promise.all(promises);
-
-   }
-
-
-   public async saveItemLinked(profilId: string, ids: Array<string>): Promise<Array<string>> {
+   public async saveItemLinked(profilId: string, ids: string[]): Promise<{ id: string; name: string; type: string; }[]> {
       let items = await this.loadElementLinked(profilId);
 
       ids.forEach(id => {
@@ -354,19 +411,41 @@ export default class ControlEndpointService {
       return res;
    }
 
+   public async removeItemSaved(groupId, profilId: string): Promise<boolean[]> {
+      let profilItems = await this.loadElementLinked(profilId);
+      let groupItems = await this.loadElementLinked(profilId);
+
+      return [this.removeItemFromLst(profilItems, groupId), this.removeItemFromLst(groupItems, profilId)];
+   }
 
 
 
+   public async _LinkNode(groupId: string, controlPointContextId: string, controlPointId: string, controlPoints): Promise<SpinalNodeRef[]> {
 
+      const isLinked = await this.controlPointProfilIsAlreadyLinked(controlPointId, groupId);
+      if (isLinked) return;
 
-   /////////////////////////////////////////////////////////////
-   //                      Event listener                     //
-   /////////////////////////////////////////////////////////////
+      const items = await Utilities.getGroupItems(groupId);
+      const promises = items.map(async el => {
+         return Utilities.linkProfilToGroupItemIfNotExist(el.id.get(), controlPointContextId, controlPointId, controlPoints);
+      })
 
+      return Promise.all(promises).then((result) => {
+         return result.map(el => SpinalGraphService.getInfo(el.getId().get()));
+      })
+   }
 
+   public removeItemFromLst(lst: spinal.Lst<SpinalNode<any>>, itemId: string): boolean {
+      for (let index = 0; index < lst.length; index++) {
+         const element = lst[index];
+         if (element.getId().get() === itemId) {
+            lst.splice(index);
+            return true;
+         }
+      }
 
-
-
+      return false;
+   }
 
 }
 
