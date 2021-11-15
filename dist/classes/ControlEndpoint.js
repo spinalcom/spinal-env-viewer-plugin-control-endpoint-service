@@ -373,7 +373,7 @@ class ControlEndpointService {
     removeItemSaved(groupId, profilId) {
         return __awaiter(this, void 0, void 0, function* () {
             let profilItems = yield this.loadElementLinked(profilId);
-            let groupItems = yield this.loadElementLinked(profilId);
+            let groupItems = yield this.loadElementLinked(groupId);
             return [this.removeItemFromLst(profilItems, groupId), this.removeItemFromLst(groupItems, profilId)];
         });
     }

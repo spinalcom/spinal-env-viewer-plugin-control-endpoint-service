@@ -413,7 +413,7 @@ export default class ControlEndpointService {
 
    public async removeItemSaved(groupId, profilId: string): Promise<boolean[]> {
       let profilItems = await this.loadElementLinked(profilId);
-      let groupItems = await this.loadElementLinked(profilId);
+      let groupItems = await this.loadElementLinked(groupId);
 
       return [this.removeItemFromLst(profilItems, groupId), this.removeItemFromLst(groupItems, profilId)];
    }
