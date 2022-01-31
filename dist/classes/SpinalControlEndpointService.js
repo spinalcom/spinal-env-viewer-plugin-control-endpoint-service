@@ -23,17 +23,16 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ControlEnpointsTree_1 = require("./ControlEnpointsTree");
-const ControlEndpoint_1 = require("./ControlEndpoint");
-const contants_1 = require("./contants");
+exports.SpinalControlEndpointService = void 0;
 const spinal_env_viewer_plugin_event_emitter_1 = require("spinal-env-viewer-plugin-event-emitter");
 const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-viewer-plugin-group-manager-service");
+const contants_1 = require("./contants");
+const ControlEndpoint_1 = require("./ControlEndpoint");
+const ControlEnpointsTree_1 = require("./ControlEnpointsTree");
 function applyMixins(derivedConstructor, baseConstructors) {
-    baseConstructors.forEach(baseConstructor => {
-        Object.getOwnPropertyNames(baseConstructor.prototype)
-            .forEach(name => {
-            Object.defineProperty(derivedConstructor.prototype, name, Object.
-                getOwnPropertyDescriptor(baseConstructor.prototype, name));
+    baseConstructors.forEach((baseConstructor) => {
+        Object.getOwnPropertyNames(baseConstructor.prototype).forEach((name) => {
+            Object.defineProperty(derivedConstructor.prototype, name, Object.getOwnPropertyDescriptor(baseConstructor.prototype, name));
         });
     });
 }
@@ -58,6 +57,8 @@ class SpinalControlEndpointService {
     }
 }
 exports.SpinalControlEndpointService = SpinalControlEndpointService;
-;
-applyMixins(SpinalControlEndpointService, [ControlEnpointsTree_1.ControlEnpointsTree, ControlEndpoint_1.ControlEndpointService]);
+applyMixins(SpinalControlEndpointService, [
+    ControlEnpointsTree_1.ControlEnpointsTree,
+    ControlEndpoint_1.ControlEndpointService,
+]);
 //# sourceMappingURL=SpinalControlEndpointService.js.map

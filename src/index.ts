@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 SpinalCom - www.spinalcom.com
+ * Copyright 2022 SpinalCom - www.spinalcom.com
  *
  * This file is part of SpinalCore.
  *
@@ -22,46 +22,46 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 
-// import { SpinalControlEndpointService } from "./SpinalControlEndpointService";
-
-
-import { getConfig, BoolConfig, EnumConfig, NumberConfig } from './models/config'
-import { SpinalControlPoint, ControlPointObj } from './models/controlPointsModel'
+import { SpinalControlEndpointService } from './classes/SpinalControlEndpointService';
 import { CalculationRule } from './dataTypes/CalculationRulesDataType';
 import { ControlEndpointDataType } from './dataTypes/ControlEndpointDataType';
-import { ControlEndpointType } from "./dataTypes/ControlEndpointType";
-
-import { SpinalControlEndpointService } from "./classes/SpinalControlEndpointService";
-
+import { ControlEndpointType } from './dataTypes/ControlEndpointType';
+import {
+  BoolConfig,
+  EnumConfig,
+  getConfig,
+  NumberConfig,
+} from './models/config';
+import {
+  ControlPointObj,
+  SpinalControlPoint,
+} from './models/controlPointsModel';
 
 const spinalControlPointService = new SpinalControlEndpointService();
 const spinalHeatmapService = spinalControlPointService;
 
-const globalRoot: any = typeof window === "undefined" ? global : window;
+const globalRoot: any = typeof window === 'undefined' ? global : window;
 
 if (typeof globalRoot.spinal === 'undefined') globalRoot.spinal = {};
 
 if (typeof globalRoot.spinal.spinalHeatmapService === 'undefined') {
-    globalRoot.spinal.spinalHeatmapService = spinalControlPointService;
+  globalRoot.spinal.spinalHeatmapService = spinalControlPointService;
 }
 
 if (typeof globalRoot.spinal.spinalControlPointService === 'undefined') {
-    globalRoot.spinal.spinalControlPointService = spinalControlPointService;
+  globalRoot.spinal.spinalControlPointService = spinalControlPointService;
 }
-
-console.log("hello from control-endpoint-service");
-
 
 export {
-    spinalControlPointService,
-    spinalHeatmapService,
-    BoolConfig,
-    EnumConfig,
-    NumberConfig,
-    getConfig,
-    SpinalControlPoint,
-    ControlPointObj,
-    CalculationRule,
-    ControlEndpointDataType,
-    ControlEndpointType
-}
+  spinalControlPointService,
+  spinalHeatmapService,
+  BoolConfig,
+  EnumConfig,
+  NumberConfig,
+  getConfig,
+  SpinalControlPoint,
+  ControlPointObj,
+  CalculationRule,
+  ControlEndpointDataType,
+  ControlEndpointType,
+};

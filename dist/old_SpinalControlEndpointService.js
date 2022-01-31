@@ -9,12 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SpinalControlEndpointService = void 0;
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-service");
+const spinal_env_viewer_plugin_event_emitter_1 = require("spinal-env-viewer-plugin-event-emitter");
 const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-viewer-plugin-group-manager-service");
 const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
 const _1 = require(".");
-const spinal_env_viewer_plugin_event_emitter_1 = require("spinal-env-viewer-plugin-event-emitter");
 const netWorkService = new spinal_model_bmsnetwork_1.default();
 /**
  * @class SpinalControlEndpointService
@@ -25,10 +26,10 @@ const netWorkService = new spinal_model_bmsnetwork_1.default();
  */
 class SpinalControlEndpointService {
     constructor() {
-        this.CONTROL_POINT_TYPE = "SpinalControlPoint";
-        this.CONTROL_GROUP_TYPE = "CONTROL_GROUP";
-        this.CONTROL_GROUP_TO_CONTROLPOINTS = "hasControlGroup";
-        this.ROOM_TO_CONTROL_GROUP = "hasControlPoints";
+        this.CONTROL_POINT_TYPE = 'SpinalControlPoint';
+        this.CONTROL_GROUP_TYPE = 'CONTROL_GROUP';
+        this.CONTROL_GROUP_TO_CONTROLPOINTS = 'hasControlGroup';
+        this.ROOM_TO_CONTROL_GROUP = 'hasControlPoints';
         this.listenLinkItemToGroupEvent();
         this.listenUnLinkItemToGroupEvent();
     }
@@ -38,7 +39,9 @@ class SpinalControlEndpointService {
      * @returns Promise
      */
     createContext(contextName) {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.createGroupContext(contextName, this.CONTROL_POINT_TYPE).then((context) => {
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .createGroupContext(contextName, this.CONTROL_POINT_TYPE)
+            .then((context) => {
             const contextId = context.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(contextId);
         });
@@ -48,8 +51,10 @@ class SpinalControlEndpointService {
      * @returns Promise
      */
     getContexts() {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroupContexts(this.CONTROL_POINT_TYPE).then((contexts) => {
-            return contexts.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id));
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .getGroupContexts(this.CONTROL_POINT_TYPE)
+            .then((contexts) => {
+            return contexts.map((el) => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id));
         });
     }
     /**
@@ -70,7 +75,9 @@ class SpinalControlEndpointService {
      * @returns Promise
      */
     createCategory(contextId, categoryName, iconName) {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addCategory(contextId, categoryName, iconName).then((result) => {
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .addCategory(contextId, categoryName, iconName)
+            .then((result) => {
             const nodeId = result.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(nodeId);
         });
@@ -82,7 +89,7 @@ class SpinalControlEndpointService {
      */
     getCategories(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getCategories(nodeId).then((result) => {
-            return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
+            return result.map((el) => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
         });
     }
     /**
@@ -94,7 +101,9 @@ class SpinalControlEndpointService {
      * @returns Promise
      */
     createGroup(contextId, categoryId, groupName, groupColor) {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addGroup(contextId, categoryId, groupName, groupColor).then((result) => {
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .addGroup(contextId, categoryId, groupName, groupColor)
+            .then((result) => {
             const nodeId = result.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(nodeId);
         });
@@ -106,7 +115,7 @@ class SpinalControlEndpointService {
      */
     getGroups(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroups(nodeId).then((result) => {
-            return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
+            return result.map((el) => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
         });
     }
     /**
@@ -126,7 +135,10 @@ class SpinalControlEndpointService {
      * @param  {any} controlPointProfil
      * @returns Promise
      */
-    createControlPointProfil(contextId, groupId, controlPointProfil = { name: "unknow", endpoints: [] }) {
+    createControlPointProfil(contextId, groupId, controlPointProfil = {
+        name: 'unknow',
+        endpoints: [],
+    }) {
         const profilNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({ name: controlPointProfil.name, type: this.CONTROL_POINT_TYPE }, new spinal_core_connectorjs_type_1.Lst(controlPointProfil.endpoints));
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.linkElementToGroup(contextId, groupId, profilNodeId);
     }
@@ -147,7 +159,7 @@ class SpinalControlEndpointService {
     getControlPointProfil(contextId, controlPointId) {
         return __awaiter(this, void 0, void 0, function* () {
             let realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(controlPointId);
-            if (typeof realNode === "undefined") {
+            if (typeof realNode === 'undefined') {
                 yield spinal_env_viewer_graph_service_1.SpinalGraphService.findInContext(contextId, contextId, (node) => {
                     if (node.getId().get() === controlPointId) {
                         spinal_env_viewer_graph_service_1.SpinalGraphService._addNode(node);
@@ -159,7 +171,7 @@ class SpinalControlEndpointService {
             }
             return {
                 name: realNode.getName().get(),
-                endpoints: yield realNode.getElement()
+                endpoints: yield realNode.getElement(),
             };
         });
     }
@@ -189,7 +201,7 @@ class SpinalControlEndpointService {
             return Promise.all(promises).then((result) => {
                 this.saveItemLinked(controlPointId, [nodeId]);
                 this.saveItemLinked(nodeId, [controlPointId]);
-                return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.getId().get()));
+                return result.map((el) => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.getId().get()));
             });
         });
     }
@@ -259,8 +271,10 @@ class SpinalControlEndpointService {
      * @returns Promise
      */
     getReferencesLinked(nodeId, profilId) {
-        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(nodeId, [this.ROOM_TO_CONTROL_GROUP]).then(profils => {
-            const found = profils.find(el => el.referenceId.get() === profilId);
+        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(nodeId, [
+            this.ROOM_TO_CONTROL_GROUP,
+        ]).then((profils) => {
+            const found = profils.find((el) => el.referenceId.get() === profilId);
             return found;
         });
     }
@@ -273,7 +287,7 @@ class SpinalControlEndpointService {
     getEndpointsLinked(nodeId, profilId) {
         return __awaiter(this, void 0, void 0, function* () {
             const endpointsInfo = yield this.getEndpointsNodeLinked(nodeId, profilId);
-            const promises = endpointsInfo.map(el => el.element.load());
+            const promises = endpointsInfo.map((el) => el.element.load());
             return Promise.all(promises);
         });
     }
@@ -287,7 +301,9 @@ class SpinalControlEndpointService {
         return __awaiter(this, void 0, void 0, function* () {
             const profilFound = yield this.getReferencesLinked(roomId, profilId);
             if (profilFound) {
-                return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(profilFound.id.get(), [spinal_model_bmsnetwork_1.SpinalBmsEndpoint.relationName]);
+                return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(profilFound.id.get(), [
+                    spinal_model_bmsnetwork_1.SpinalBmsEndpoint.relationName,
+                ]);
             }
             return [];
         });
@@ -304,7 +320,6 @@ class SpinalControlEndpointService {
             realNode.info.add_attr({ linkedItems: new spinal_core_connectorjs_type_1.Ptr(res) });
             return Promise.resolve(res);
         }
-        ;
         return new Promise((resolve, reject) => {
             realNode.info.linkedItems.load((res) => {
                 return resolve(res);
@@ -321,7 +336,7 @@ class SpinalControlEndpointService {
             //     return [info];
             // }
             const groups = yield spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroups(nodeId);
-            const promises = groups.map(el => spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getElementsLinkedToGroup(el.id.get()));
+            const promises = groups.map((el) => spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getElementsLinkedToGroup(el.id.get()));
             return Promise.all(promises).then((result) => {
                 return result.flat();
             });
@@ -332,7 +347,7 @@ class SpinalControlEndpointService {
             const groupNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({
                 name: groupName,
                 referenceId: controlPointId,
-                type: spinal_model_bmsnetwork_1.SpinalBmsEndpointGroup.nodeTypeName
+                type: spinal_model_bmsnetwork_1.SpinalBmsEndpointGroup.nodeTypeName,
             }, new spinal_core_connectorjs_type_1.Model());
             const promises = controlPoints.map((endpoint) => __awaiter(this, void 0, void 0, function* () {
                 return this.linkEndpointToProfil(controlPointContextId, groupNodeId, endpoint);
@@ -344,7 +359,7 @@ class SpinalControlEndpointService {
     linkEndpointToProfil(controlPointContextId, groupNodeId, endpoint) {
         return __awaiter(this, void 0, void 0, function* () {
             // const endpoint = element.get();
-            endpoint["currentValue"] = this.getCurrentValue(endpoint.dataType);
+            endpoint['currentValue'] = this.getCurrentValue(endpoint.dataType);
             const endpointObj = this.createEndpointNode(endpoint);
             yield spinal_env_viewer_graph_service_1.SpinalGraphService.addChildInContext(groupNodeId, endpointObj.childId, controlPointContextId, spinal_model_bmsnetwork_1.SpinalBmsEndpoint.relationName, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE);
             // await SpinalGraphService.addChild(groupNodeId, endpointObj.childId, SpinalBmsEndpoint.relationName, SPINAL_RELATION_PTR_LST_TYPE);
@@ -358,11 +373,12 @@ class SpinalControlEndpointService {
             alias: obj.alias,
             command: obj.command,
             saveTimeSeries: obj.saveTimeSeries,
+            // config: obj.config
         });
         const childId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({
             type: spinal_model_bmsnetwork_1.SpinalBmsEndpoint.nodeTypeName,
             endpointId: obj.id,
-            name: obj.name
+            name: obj.name,
         }, res);
         return { childId, res };
         // await SpinalGraphService.addChildInContext(
@@ -385,7 +401,7 @@ class SpinalControlEndpointService {
             case _1.ControlEndpointDataType.Long:
                 return 0;
             default:
-                return "";
+                return '';
         }
     }
     saveItemLinked(profilId, ids) {
@@ -397,7 +413,7 @@ class SpinalControlEndpointService {
             //     realNode.info.add_attr({ linkedItems: _ptr });
             //     return ids;
             // }
-            ids.forEach(id => {
+            ids.forEach((id) => {
                 const isLinked = this.isLinked(items, id);
                 if (!isLinked) {
                     const realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(id);
@@ -427,7 +443,7 @@ class SpinalControlEndpointService {
         const realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(nodeId);
         if (realNode.contextIds) {
             const contextIds = realNode.contextIds.values();
-            return contextIds.find(id => {
+            return contextIds.find((id) => {
                 return this.isControlPointContext(id);
             });
         }
@@ -445,27 +461,27 @@ class SpinalControlEndpointService {
         return __awaiter(this, void 0, void 0, function* () {
             const linked = yield this.getElementLinked(groupId);
             const found = linked.find((el) => el.id.get() === profilId);
-            return typeof found !== "undefined";
+            return typeof found !== 'undefined';
         });
     }
     getDifference(oldEndpoint, newEndpoints) {
-        const toCreate = newEndpoints.filter(el => {
-            const found = oldEndpoint.find(el2 => el2.id === el.id);
-            return typeof found === "undefined";
+        const toCreate = newEndpoints.filter((el) => {
+            const found = oldEndpoint.find((el2) => el2.id === el.id);
+            return typeof found === 'undefined';
         });
-        const toRemove = oldEndpoint.filter(el => {
-            const found = newEndpoints.find(el2 => el2.id === el.id);
-            return typeof found === "undefined";
+        const toRemove = oldEndpoint.filter((el) => {
+            const found = newEndpoints.find((el2) => el2.id === el.id);
+            return typeof found === 'undefined';
         });
-        const toUpdate = newEndpoints.filter(el => this.isUpdated(el, oldEndpoint));
+        const toUpdate = newEndpoints.filter((el) => this.isUpdated(el, oldEndpoint));
         return {
             toCreate,
             toUpdate,
-            toRemove
+            toRemove,
         };
     }
     isUpdated(controlPoint, oldEndpoint) {
-        const found = oldEndpoint.find(el => el.id === controlPoint.id);
+        const found = oldEndpoint.find((el) => el.id === controlPoint.id);
         if (!found)
             return false;
         const objAreEquals = this.objectsAreEquals(controlPoint, found);
@@ -490,9 +506,9 @@ class SpinalControlEndpointService {
         return true;
     }
     configAreEquals(config1, config2) {
-        const isEnum = typeof config1.enumeration !== "undefined";
+        const isEnum = typeof config1.enumeration !== 'undefined';
         if (isEnum) {
-            const enum2 = typeof config2.enumeration !== "undefined";
+            const enum2 = typeof config2.enumeration !== 'undefined';
             if (!enum2)
                 return false;
             if (config1.enumeration.length !== config2.enumeration.length)
@@ -513,7 +529,7 @@ class SpinalControlEndpointService {
                 return false;
             }
             for (const key of keys1) {
-                if (typeof config1[key] !== "object" && config1[key] !== config2[key]) {
+                if (typeof config1[key] !== 'object' && config1[key] !== config2[key]) {
                     return false;
                 }
                 else if (!this.objectsAreEquals(config1[key], config2[key])) {
@@ -532,7 +548,7 @@ class SpinalControlEndpointService {
             }
             return Promise.all(promises).then((roomsArrays) => {
                 const rooms = roomsArrays.flat();
-                const promises2 = rooms.map(el => this.getReferencesLinked(el.id.get(), controlPointId));
+                const promises2 = rooms.map((el) => this.getReferencesLinked(el.id.get(), controlPointId));
                 return Promise.all(promises2).then((result) => {
                     return result.flat();
                 });
@@ -540,10 +556,12 @@ class SpinalControlEndpointService {
         });
     }
     getProfilEndpoints(profilId) {
-        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(profilId, [spinal_model_bmsnetwork_1.SpinalBmsEndpoint.relationName]);
+        return spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(profilId, [
+            spinal_model_bmsnetwork_1.SpinalBmsEndpoint.relationName,
+        ]);
     }
     create(controlPointContextId, newList, profils, endpointsLst) {
-        const promises = newList.map(endpoint => {
+        const promises = newList.map((endpoint) => {
             endpointsLst.push(endpoint);
             const promises2 = profils.map((profil) => __awaiter(this, void 0, void 0, function* () {
                 return this.linkEndpointToProfil(controlPointContextId, profil.id.get(), endpoint);
@@ -553,7 +571,7 @@ class SpinalControlEndpointService {
         return Promise.all(promises);
     }
     update(controlPointContextId, newList, profils, endpointsLst) {
-        const promises = newList.map(element => {
+        const promises = newList.map((element) => {
             const index = this.getIndex(endpointsLst, element.id);
             this.setProfilValue(element, endpointsLst[index]);
             const promises2 = profils.map((profil) => __awaiter(this, void 0, void 0, function* () {
@@ -565,7 +583,7 @@ class SpinalControlEndpointService {
         return Promise.all(promises);
     }
     delete(controlPointContextId, newList, profils, endpointsLst) {
-        const promises = newList.map(element => {
+        const promises = newList.map((element) => {
             const index = this.getIndex(endpointsLst, element.id);
             endpointsLst.splice(index);
             const promises2 = profils.map((profil) => __awaiter(this, void 0, void 0, function* () {
@@ -579,7 +597,7 @@ class SpinalControlEndpointService {
     getEndpointByType(profilId, endpointId) {
         return __awaiter(this, void 0, void 0, function* () {
             const endpoints = yield this.getProfilEndpoints(profilId);
-            const found = endpoints.find(el => el.endpointId.get() === endpointId);
+            const found = endpoints.find((el) => el.endpointId.get() === endpointId);
             if (found) {
                 return found.id.get();
             }
@@ -607,7 +625,7 @@ class SpinalControlEndpointService {
             const realNode = spinal_env_viewer_graph_service_1.SpinalGraphService.getRealNode(endpointId);
             const element = yield info.element.load();
             for (const key of Object.keys(newProfil)) {
-                if (key !== "config" && element[key])
+                if (key !== 'config' && element[key])
                     element[key].set(newProfil[key]);
             }
             realNode.info.name.set(newProfil.name);
@@ -634,9 +652,9 @@ class SpinalControlEndpointService {
             const profilsLinkedModel = yield this.getElementLinked(data.groupId);
             const elementProfilsModel = spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(data.elementId, [this.ROOM_TO_CONTROL_GROUP]);
             const profilsLinked = profilsLinkedModel.map((el) => el.get());
-            const elementProfils = (yield elementProfilsModel).map(el => el.get());
+            const elementProfils = (yield elementProfilsModel).map((el) => el.get());
             const promises = elementProfils.map((profil) => {
-                const found = profilsLinked.find(el => el.id === profil.referenceId);
+                const found = profilsLinked.find((el) => el.id === profil.referenceId);
                 if (found) {
                     return spinal_env_viewer_graph_service_1.SpinalGraphService.removeChild(data.elementId, profil.id, this.ROOM_TO_CONTROL_GROUP, spinal_env_viewer_graph_service_1.SPINAL_RELATION_PTR_LST_TYPE);
                 }

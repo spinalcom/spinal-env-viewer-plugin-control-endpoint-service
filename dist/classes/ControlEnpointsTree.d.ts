@@ -1,12 +1,12 @@
-import { SpinalNodeRef } from "spinal-env-viewer-graph-service";
-import { IControlEndpoint } from "../interfaces/ControlEndpoint";
+import { SpinalNodeRef } from 'spinal-env-viewer-graph-service';
+import { IControlEndpoint } from '../interfaces/ControlEndpoint';
 export default class ControlEnpointsTree {
     constructor();
     /**
-      * This method creates a context of control Endpoint
-      * @param  {string} contextName - The context of heatmap Name
-      * @returns Promise
-      */
+     * This method creates a context of control Endpoint
+     * @param  {string} contextName - The context of heatmap Name
+     * @returns Promise
+     */
     createContext(contextName: string): Promise<SpinalNodeRef>;
     /**
      * retrieves and returns all contexts of control Endpoint
@@ -55,12 +55,12 @@ export default class ControlEnpointsTree {
      */
     isControlPointGroup(id: string): boolean;
     /**
-      * creates and links a profil of control endpoint to the group selected in the context selected
-      * @param  {string} contextId
-      * @param  {string} groupId
-      * @param  {any} controlPointProfil
-      * @returns Promise of new groupId and old groupId
-      */
+     * creates and links a profil of control endpoint to the group selected in the context selected
+     * @param  {string} contextId
+     * @param  {string} groupId
+     * @param  {any} controlPointProfil
+     * @returns Promise of new groupId and old groupId
+     */
     createControlPointProfil(contextId: string, groupId: string, controlPointProfil?: {
         name: string;
         endpoints: IControlEndpoint[];

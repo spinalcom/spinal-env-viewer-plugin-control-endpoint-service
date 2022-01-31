@@ -23,6 +23,7 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ControlEndpointDataType = void 0;
 var ControlEndpointDataType;
 (function (ControlEndpointDataType) {
     ControlEndpointDataType["Null"] = "Null";

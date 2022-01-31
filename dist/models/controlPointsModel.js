@@ -23,30 +23,31 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SpinalControlPoint = exports.ControlPointObj = void 0;
 const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
-const ControlEndpointType_1 = require("../dataTypes/ControlEndpointType");
 const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
+const ControlEndpointType_1 = require("../dataTypes/ControlEndpointType");
 const config_1 = require("./config");
 exports.ControlPointObj = Object.freeze({
-    name: "",
-    alias: "",
-    path: "",
-    unit: "",
+    name: '',
+    alias: '',
+    path: '',
+    unit: '',
     dataType: ControlEndpointDataType_1.ControlEndpointDataType.Float,
     type: ControlEndpointType_1.ControlEndpointType.Temperature,
     command: 0,
     saveTimeSeries: 0,
-    config: config_1.getConfig(ControlEndpointDataType_1.ControlEndpointDataType.Float),
-    icon: "device_thermostat",
-    isActive: true
+    config: (0, config_1.getConfig)(ControlEndpointDataType_1.ControlEndpointDataType.Float),
+    icon: 'device_thermostat',
+    isActive: true,
 });
 class SpinalControlPoint extends spinal_core_connectorjs_type_1.Model {
     constructor(controlPoint) {
         super();
         if (controlPoint) {
-            controlPoint.config = config_1.getConfig(controlPoint.dataType);
+            controlPoint.config = (0, config_1.getConfig)(controlPoint.dataType);
         }
-        if (typeof controlPoint === "undefined") {
+        if (typeof controlPoint === 'undefined') {
             controlPoint = exports.ControlPointObj;
         }
         this.add_attr(controlPoint);
@@ -55,7 +56,7 @@ class SpinalControlPoint extends spinal_core_connectorjs_type_1.Model {
     bindDataType() {
         this.dataType.bind(() => {
             const type = this.dataType.get();
-            this.mod_attr('config', config_1.getConfig(type));
+            this.mod_attr('config', (0, config_1.getConfig)(type));
         });
     }
 }

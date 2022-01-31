@@ -1,1 +1,1 @@
-{"version":3,"file":"ControlEndpoint.js","sourceRoot":"","sources":["../../src/interfaces/ControlEndpoint.ts"],"names":[],"mappings":";AAAA;;;;;;;;;;;;;;;;;;;;;;GAsBG;;AAuBH,MAAa,qBAAsB,SAAQ,MAAM,CAAC,KAAK;CActD;AAdD,sDAcC"}
+{"version":3,"file":"ControlEndpoint.js","sourceRoot":"","sources":["../../src/interfaces/ControlEndpoint.ts"],"names":[],"mappings":";AAAA;;;;;;;;;;;;;;;;;;;;;;GAsBG;;;AAyBH,MAAa,qBAAsB,SAAQ,MAAM,CAAC,KAAK;CActD;AAdD,sDAcC"}

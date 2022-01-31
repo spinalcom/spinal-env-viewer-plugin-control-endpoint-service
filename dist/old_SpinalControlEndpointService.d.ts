@@ -1,5 +1,5 @@
-import { Model } from "spinal-core-connectorjs_type";
-import { IControlEndpoint } from "./interfaces/ControlEndpoint";
+import { Model } from 'spinal-core-connectorjs_type';
+import { IControlEndpoint } from './interfaces/ControlEndpoint';
 /**
  * @class SpinalControlEndpointService
  *  @property {string} CONTROL_POINT_TYPE - typeof control point node

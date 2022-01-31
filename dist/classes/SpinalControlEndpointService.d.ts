@@ -1,5 +1,5 @@
-import { ControlEnpointsTree } from "./ControlEnpointsTree";
-import { ControlEndpointService } from "./ControlEndpoint";
+import { ControlEndpointService } from './ControlEndpoint';
+import { ControlEnpointsTree } from './ControlEnpointsTree';
 declare class SpinalControlEndpointService {
     CONTROL_POINT_TYPE: string;
     CONTROL_GROUP_TYPE: string;

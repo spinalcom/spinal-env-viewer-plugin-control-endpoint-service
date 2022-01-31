@@ -23,20 +23,22 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ControlEnpointsTree = void 0;
+const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const spinal_env_viewer_graph_service_1 = require("spinal-env-viewer-graph-service");
 const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-viewer-plugin-group-manager-service");
-const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
 const contants_1 = require("./contants");
 class ControlEnpointsTree {
     constructor() { }
-    ;
     /**
-      * This method creates a context of control Endpoint
-      * @param  {string} contextName - The context of heatmap Name
-      * @returns Promise
-      */
+     * This method creates a context of control Endpoint
+     * @param  {string} contextName - The context of heatmap Name
+     * @returns Promise
+     */
     createContext(contextName) {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.createGroupContext(contextName, contants_1.CONTROL_POINT_TYPE).then((context) => {
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .createGroupContext(contextName, contants_1.CONTROL_POINT_TYPE)
+            .then((context) => {
             const contextId = context.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(contextId);
         });
@@ -46,8 +48,10 @@ class ControlEnpointsTree {
      * @returns Promise
      */
     getContexts() {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroupContexts(contants_1.CONTROL_POINT_TYPE).then((contexts) => {
-            return contexts.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id));
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .getGroupContexts(contants_1.CONTROL_POINT_TYPE)
+            .then((contexts) => {
+            return contexts.map((el) => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id));
         });
     }
     /**
@@ -58,7 +62,9 @@ class ControlEnpointsTree {
      * @returns Promise
      */
     createCategory(contextId, categoryName, iconName) {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addCategory(contextId, categoryName, iconName).then((result) => {
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .addCategory(contextId, categoryName, iconName)
+            .then((result) => {
             const nodeId = result.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(nodeId);
         });
@@ -70,7 +76,7 @@ class ControlEnpointsTree {
      */
     getCategories(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getCategories(nodeId).then((result) => {
-            return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
+            return result.map((el) => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
         });
     }
     /**
@@ -82,7 +88,9 @@ class ControlEnpointsTree {
      * @returns Promise
      */
     createGroup(contextId, categoryId, groupName, groupColor) {
-        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.addGroup(contextId, categoryId, groupName, groupColor).then((result) => {
+        return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService
+            .addGroup(contextId, categoryId, groupName, groupColor)
+            .then((result) => {
             const nodeId = result.getId().get();
             return spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(nodeId);
         });
@@ -94,7 +102,7 @@ class ControlEnpointsTree {
      */
     getGroups(nodeId) {
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.getGroups(nodeId).then((result) => {
-            return result.map(el => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
+            return result.map((el) => spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(el.id.get()));
         });
     }
     /**
@@ -116,13 +124,16 @@ class ControlEnpointsTree {
         return type === `${contants_1.CONTROL_POINT_TYPE}Group`;
     }
     /**
-      * creates and links a profil of control endpoint to the group selected in the context selected
-      * @param  {string} contextId
-      * @param  {string} groupId
-      * @param  {any} controlPointProfil
-      * @returns Promise of new groupId and old groupId
-      */
-    createControlPointProfil(contextId, groupId, controlPointProfil = { name: "unknow", endpoints: [] }) {
+     * creates and links a profil of control endpoint to the group selected in the context selected
+     * @param  {string} contextId
+     * @param  {string} groupId
+     * @param  {any} controlPointProfil
+     * @returns Promise of new groupId and old groupId
+     */
+    createControlPointProfil(contextId, groupId, controlPointProfil = {
+        name: 'unknow',
+        endpoints: [],
+    }) {
         const profilNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({ name: controlPointProfil.name, type: contants_1.CONTROL_POINT_TYPE }, new spinal_core_connectorjs_type_1.Lst(controlPointProfil.endpoints));
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.linkElementToGroup(contextId, groupId, profilNodeId);
     }

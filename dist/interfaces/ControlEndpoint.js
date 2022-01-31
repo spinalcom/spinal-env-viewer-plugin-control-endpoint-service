@@ -23,6 +23,7 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.IControlEndpointModel = void 0;
 class IControlEndpointModel extends spinal.Model {
 }
 exports.IControlEndpointModel = IControlEndpointModel;

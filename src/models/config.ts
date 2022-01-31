@@ -22,46 +22,46 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 
-import { ControlEndpointDataType } from "../dataTypes/ControlEndpointDataType";
-import { BoolConfigDataType, EnumConfigDataType, NumberConfigDataType } from "../dataTypes/ControlConfigDataType";
-import { CalculationRule } from "../dataTypes/CalculationRulesDataType";
-
+import { CalculationRule } from '../dataTypes/CalculationRulesDataType';
+import {
+  BoolConfigDataType,
+  EnumConfigDataType,
+  NumberConfigDataType,
+} from '../dataTypes/ControlConfigDataType';
+import { ControlEndpointDataType } from '../dataTypes/ControlEndpointDataType';
 
 export const BoolConfig: BoolConfigDataType = {
-    min: { value: false, color: "#008000" },
-    max: { value: true, color: "#FF0000" },
-    calculation_rule: CalculationRule.Reference
-}
-
+  min: { value: false, color: '#008000' },
+  max: { value: true, color: '#FF0000' },
+  calculation_rule: CalculationRule.Reference,
+};
 
 export const EnumConfig: EnumConfigDataType = {
-    enumeration: [],
-    calculation_rule: CalculationRule.Reference
-}
+  enumeration: [],
+  calculation_rule: CalculationRule.Reference,
+};
 
 export const NumberConfig: NumberConfigDataType = {
-    min: { value: 0, color: "#FF0000" },
-    average: { value: 15, color: "#ffff00" },
-    max: { value: 30, color: "#008000" },
-    calculation_rule: CalculationRule.Reference
-}
+  min: { value: 0, color: '#FF0000' },
+  average: { value: 15, color: '#ffff00' },
+  max: { value: 30, color: '#008000' },
+  calculation_rule: CalculationRule.Reference,
+};
 
 export const getConfig = function (dataType: ControlEndpointDataType) {
+  switch (dataType) {
+    case ControlEndpointDataType.Boolean:
+      return BoolConfig;
 
-    switch (dataType) {
-        case ControlEndpointDataType.Boolean:
-            return BoolConfig;
+    case ControlEndpointDataType.Enum:
+      return EnumConfig;
 
-        case ControlEndpointDataType.Enum:
-            return EnumConfig;
-
-        case ControlEndpointDataType.Float:
-        case ControlEndpointDataType.Integer:
-        case ControlEndpointDataType.Integer16:
-        case ControlEndpointDataType.Real:
-        case ControlEndpointDataType.Double:
-        case ControlEndpointDataType.Long:
-            return NumberConfig;
-    }
-
-}
+    case ControlEndpointDataType.Float:
+    case ControlEndpointDataType.Integer:
+    case ControlEndpointDataType.Integer16:
+    case ControlEndpointDataType.Real:
+    case ControlEndpointDataType.Double:
+    case ControlEndpointDataType.Long:
+      return NumberConfig;
+  }
+};

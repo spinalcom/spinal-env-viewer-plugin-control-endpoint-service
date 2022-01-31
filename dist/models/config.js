@@ -23,24 +23,25 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
+exports.getConfig = exports.NumberConfig = exports.EnumConfig = exports.BoolConfig = void 0;
 const CalculationRulesDataType_1 = require("../dataTypes/CalculationRulesDataType");
+const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
 exports.BoolConfig = {
-    min: { value: false, color: "#008000" },
-    max: { value: true, color: "#FF0000" },
-    calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference
+    min: { value: false, color: '#008000' },
+    max: { value: true, color: '#FF0000' },
+    calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference,
 };
 exports.EnumConfig = {
     enumeration: [],
-    calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference
+    calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference,
 };
 exports.NumberConfig = {
-    min: { value: 0, color: "#FF0000" },
-    average: { value: 15, color: "#ffff00" },
-    max: { value: 30, color: "#008000" },
-    calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference
+    min: { value: 0, color: '#FF0000' },
+    average: { value: 15, color: '#ffff00' },
+    max: { value: 30, color: '#008000' },
+    calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference,
 };
-exports.getConfig = function (dataType) {
+const getConfig = function (dataType) {
     switch (dataType) {
         case ControlEndpointDataType_1.ControlEndpointDataType.Boolean:
             return exports.BoolConfig;
@@ -55,4 +56,5 @@ exports.getConfig = function (dataType) {
             return exports.NumberConfig;
     }
 };
+exports.getConfig = getConfig;
 //# sourceMappingURL=config.js.map

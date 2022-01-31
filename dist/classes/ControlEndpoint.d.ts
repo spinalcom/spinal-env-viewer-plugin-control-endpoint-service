@@ -1,5 +1,5 @@
-import { SpinalNodeRef, SpinalNode } from "spinal-env-viewer-graph-service";
-import { IControlEndpoint, IControlEndpointModel } from "../interfaces/ControlEndpoint";
+import { SpinalNode, SpinalNodeRef } from 'spinal-env-viewer-graph-service';
+import { IControlEndpoint, IControlEndpointModel } from '../interfaces/ControlEndpoint';
 export default class ControlEndpointService {
     constructor();
     /**
@@ -9,11 +9,11 @@ export default class ControlEndpointService {
      */
     isControlPointContext(id: string): boolean;
     /**
-      * get All control endpoint profile  linked to control endpoint node
-      * @param  {string} contextId
-      * @param  {string} controlPointId
-      * @returns Promise
-      */
+     * get All control endpoint profile  linked to control endpoint node
+     * @param  {string} contextId
+     * @param  {string} controlPointId
+     * @returns Promise
+     */
     getControlPointProfil(contextId: string, controlPointId: string): Promise<{
         name: string;
         endpoints: spinal.Lst<IControlEndpointModel>;
@@ -97,11 +97,11 @@ export default class ControlEndpointService {
         }[];
     }[]>;
     /**
-    * get All endpoints linked to roomId and created according the profil selected
-    * @param  {string} roomId - nodeId
-    * @param  {string} profilId - controlEndpoint profil id
-    * @returns Promise
-    */
+     * get All endpoints linked to roomId and created according the profil selected
+     * @param  {string} roomId - nodeId
+     * @param  {string} profilId - controlEndpoint profil id
+     * @returns Promise
+     */
     getEndpointsLinked(nodeId: string, profilId: string): Promise<spinal.Model[]>;
     /**
      * This method allows to create and link endpoints to group item according the profil linked to group

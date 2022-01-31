@@ -1,8 +1,8 @@
-import { SpinalNode, SpinalNodeRef } from "spinal-env-viewer-graph-service";
-import { SpinalBmsEndpoint } from "spinal-model-bmsnetwork";
-import { IControlEndpoint } from "../interfaces/ControlEndpoint";
-import { IDiffResult } from "../interfaces/IDiffResult";
-import { BoolConfigDataType, EnumConfigDataType, NumberConfigDataType } from "../dataTypes/ControlConfigDataType";
+import { SpinalNode, SpinalNodeRef } from 'spinal-env-viewer-graph-service';
+import { SpinalBmsEndpoint } from 'spinal-model-bmsnetwork';
+import { BoolConfigDataType, EnumConfigDataType, NumberConfigDataType } from '../dataTypes/ControlConfigDataType';
+import { IControlEndpoint } from '../interfaces/ControlEndpoint';
+import { IDiffResult } from '../interfaces/IDiffResult';
 export default abstract class Utilities {
     static getGroups(nodeId: string): Promise<SpinalNodeRef>;
     static getGroupItems(groupId: string): Promise<SpinalNodeRef[]>;

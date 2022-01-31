@@ -1,5 +1,5 @@
-import { BoolConfigDataType, EnumConfigDataType, NumberConfigDataType } from "../dataTypes/ControlConfigDataType";
-import { ControlEndpointDataType, ControlEndpointType } from "..";
+import { ControlEndpointDataType, ControlEndpointType } from '..';
+import { BoolConfigDataType, EnumConfigDataType, NumberConfigDataType } from '../dataTypes/ControlConfigDataType';
 export interface IControlEndpoint {
     id?: string;
     name: string;
