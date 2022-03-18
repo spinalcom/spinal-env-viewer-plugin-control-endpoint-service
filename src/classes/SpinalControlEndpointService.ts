@@ -78,7 +78,7 @@ class SpinalControlEndpointService {
 
 interface SpinalControlEndpointService
   extends ControlEnpointsTree,
-    ControlEndpointService {}
+  ControlEndpointService { }
 
 applyMixins(SpinalControlEndpointService, [
   ControlEnpointsTree,

@@ -26,16 +26,10 @@ import { SpinalControlEndpointService } from './classes/SpinalControlEndpointSer
 import { CalculationRule } from './dataTypes/CalculationRulesDataType';
 import { ControlEndpointDataType } from './dataTypes/ControlEndpointDataType';
 import { ControlEndpointType } from './dataTypes/ControlEndpointType';
-import {
-  BoolConfig,
-  EnumConfig,
-  getConfig,
-  NumberConfig,
-} from './models/config';
-import {
-  ControlPointObj,
-  SpinalControlPoint,
-} from './models/controlPointsModel';
+import { BoolConfig, EnumConfig, getConfig, NumberConfig } from './models/config';
+import { ControlPointObj, SpinalControlPoint, } from './models/controlPointsModel';
+export * from "./classes/contants";
+
 
 const spinalControlPointService = new SpinalControlEndpointService();
 const spinalHeatmapService = spinalControlPointService;
@@ -51,6 +45,8 @@ if (typeof globalRoot.spinal.spinalHeatmapService === 'undefined') {
 if (typeof globalRoot.spinal.spinalControlPointService === 'undefined') {
   globalRoot.spinal.spinalControlPointService = spinalControlPointService;
 }
+
+
 
 export {
   spinalControlPointService,

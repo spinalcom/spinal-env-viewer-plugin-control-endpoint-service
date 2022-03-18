@@ -6,6 +6,7 @@
     "noImplicitAny": false,
     "skipLibCheck": true,
     "declaration": true,
+    "declarationDir": "./declarations",
     "sourceMap": true
   },
   "include": [

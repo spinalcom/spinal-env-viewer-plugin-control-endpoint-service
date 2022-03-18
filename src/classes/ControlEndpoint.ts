@@ -23,22 +23,14 @@
  */
 
 import { Lst, Ptr } from 'spinal-core-connectorjs_type';
-import {
-  SpinalGraphService,
-  SpinalNode,
-  SpinalNodeRef,
-  SPINAL_RELATION_PTR_LST_TYPE,
-} from 'spinal-env-viewer-graph-service';
+import { SpinalGraphService, SpinalNode, SpinalNodeRef, SPINAL_RELATION_PTR_LST_TYPE, } from 'spinal-env-viewer-graph-service';
 import { SpinalBmsEndpoint } from 'spinal-model-bmsnetwork';
-import {
-  IControlEndpoint,
-  IControlEndpointModel,
-} from '../interfaces/ControlEndpoint';
+import { IControlEndpoint, IControlEndpointModel, } from '../interfaces/ControlEndpoint';
 import { CONTROL_POINT_TYPE, ROOM_TO_CONTROL_GROUP } from './contants';
 import { Utilities } from './Utilities';
 
 export default class ControlEndpointService {
-  constructor() {}
+  constructor() { }
 
   /**
    * checks if the id passed in parameter is a context of control Endpoint
@@ -261,11 +253,7 @@ export default class ControlEndpointService {
    * @param  {string} profilId - controlEndpoint profil id
    * @returns Promise
    */
-  public async getEndpointsNodeLinked(
-    roomId: string,
-    profilId: string,
-    referenceLinked?: SpinalNodeRef
-  ): Promise<SpinalNodeRef[]> {
+  public async getEndpointsNodeLinked(roomId: string, profilId: string, referenceLinked?: SpinalNodeRef): Promise<SpinalNodeRef[]> {
     const found =
       referenceLinked || (await this.getReferencesLinked(roomId, profilId));
     let profilFound = Array.isArray(found) ? found[0] : found;
@@ -284,12 +272,10 @@ export default class ControlEndpointService {
    * @param  {string} nodeId - controlPointId or groupId
    * @returns Promise
    */
-  public loadElementLinked(
-    nodeId: string
-  ): Promise<spinal.Lst<SpinalNode<any>>> {
+  public loadElementLinked(nodeId: string): Promise<spinal.Lst<SpinalNode<any>>> {
     const realNode = SpinalGraphService.getRealNode(nodeId);
     if (!realNode || !realNode.info || !realNode.info.linkedItems) {
-      let res = new Lst();
+      let res: spinal.Lst<SpinalNode<any>> = new Lst();
       realNode.info.add_attr({ linkedItems: new Ptr(res) });
       return Promise.resolve(res);
     }
