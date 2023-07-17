@@ -23,8 +23,31 @@
  * <http://resources.spinalcom.com/licenses.pdf>.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IControlEndpointModel = void 0;
-class IControlEndpointModel extends spinal.Model {
+exports.isLinkedDirectlyToGroup = exports.ILinkedToGroupRes = exports.IControlEndpointModel = void 0;
+const spinal_core_connectorjs_type_1 = require("spinal-core-connectorjs_type");
+class IControlEndpointModel extends spinal_core_connectorjs_type_1.Model {
 }
 exports.IControlEndpointModel = IControlEndpointModel;
+// export class IControlEndpointModel extends spinal.Model {
+//   id?: string;
+//   name: string;
+//   alias: string;
+//   path: string;
+//   unit: string;
+//   dataType: ControlEndpointDataType;
+//   type: ControlEndpointType;
+//   command: number;
+//   saveTimeSeries: number;
+//   icon: string;
+//   config: BoolConfigDataType | EnumConfigDataType | NumberConfigDataType;
+//   isActive?: boolean;
+//   currentValue?: string | boolean | number;
+// }
+class ILinkedToGroupRes extends spinal_core_connectorjs_type_1.Model {
+}
+exports.ILinkedToGroupRes = ILinkedToGroupRes;
+const isLinkedDirectlyToGroup = (model) => {
+    return model.linkedDirectlyToGroup;
+};
+exports.isLinkedDirectlyToGroup = isLinkedDirectlyToGroup;
 //# sourceMappingURL=ControlEndpoint.js.map

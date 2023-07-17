@@ -42,14 +42,15 @@ import {
 } from '../dataTypes/ControlConfigDataType';
 import { ControlEndpointDataType } from '../dataTypes/ControlEndpointDataType';
 import { ControlEndpointType } from '../dataTypes/ControlEndpointType';
-import { IControlEndpoint } from '../interfaces/ControlEndpoint';
+import { IControlEndpoint, ILinkedToGroupRes, isLinkedDirectlyToGroup } from '../interfaces/ControlEndpoint';
 import { IDiffResult } from '../interfaces/IDiffResult';
 import { ROOM_TO_CONTROL_GROUP } from './contants';
 
 const netWorkService = new NetworkService();
 
 export default abstract class Utilities {
-  public static getGroups(nodeId: string): Promise<SpinalNodeRef> {
+  
+  public static getGroups(nodeId: string): Promise<SpinalNodeRef[]> {
     return groupManagerService.getGroups(nodeId);
   }
 
@@ -70,11 +71,13 @@ export default abstract class Utilities {
     controlPointId: string,
     controlPoints: IControlEndpoint[]
   ): Promise<string> {
+    const date = Date.now();
     const groupNodeId = SpinalGraphService.createNode(
       {
         name: groupName,
         referenceId: controlPointId,
         type: SpinalBmsEndpointGroup.nodeTypeName,
+        directModificationDate : date, creationDate: date
       },
       new Model()
     );
@@ -137,12 +140,13 @@ export default abstract class Utilities {
       isActive: obj?.isActive || true,
       // config: obj.config
     });
-
+    const date = Date.now()
     const childId = SpinalGraphService.createNode(
       {
         type: SpinalBmsEndpoint.nodeTypeName,
         endpointId: obj.id,
         name: obj.name,
+        directModificationDate : date, creationDate: date
       },
       res
     );
@@ -174,12 +178,10 @@ export default abstract class Utilities {
     }
   }
 
-  public static isLinked(
-    items: spinal.Lst<SpinalNode<any>>,
-    id: string
-  ): boolean {
+  public static isLinked(items: spinal.Lst<SpinalNode> | spinal.Lst<ILinkedToGroupRes>, id: string): boolean {
     for (let index = 0; index < items.length; index++) {
-      const nodeId = items[index].getId().get();
+      const node = isLinkedDirectlyToGroup(items[index]) ? items[index].node : items[index]; 
+      const nodeId = node.getId().get();
       if (nodeId === id) return true;
     }
 

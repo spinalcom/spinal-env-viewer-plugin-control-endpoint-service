@@ -39,6 +39,7 @@ const spinal_env_viewer_plugin_group_manager_service_1 = require("spinal-env-vie
 const spinal_model_bmsnetwork_1 = require("spinal-model-bmsnetwork");
 const ControlEndpointDataType_1 = require("../dataTypes/ControlEndpointDataType");
 const ControlEndpointType_1 = require("../dataTypes/ControlEndpointType");
+const ControlEndpoint_1 = require("../interfaces/ControlEndpoint");
 const contants_1 = require("./contants");
 const netWorkService = new spinal_model_bmsnetwork_1.NetworkService();
 class Utilities {
@@ -57,10 +58,12 @@ class Utilities {
     }
     static createNode(groupName, controlPointContextId, controlPointId, controlPoints) {
         return __awaiter(this, void 0, void 0, function* () {
+            const date = Date.now();
             const groupNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({
                 name: groupName,
                 referenceId: controlPointId,
                 type: spinal_model_bmsnetwork_1.SpinalBmsEndpointGroup.nodeTypeName,
+                directModificationDate: date, creationDate: date
             }, new spinal_core_connectorjs_type_1.Model());
             const promises = controlPoints.map((endpoint) => __awaiter(this, void 0, void 0, function* () {
                 return this.linkEndpointToProfil(controlPointContextId, groupNodeId, endpoint);
@@ -89,10 +92,12 @@ class Utilities {
             isActive: (obj === null || obj === void 0 ? void 0 : obj.isActive) || true,
             // config: obj.config
         });
+        const date = Date.now();
         const childId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({
             type: spinal_model_bmsnetwork_1.SpinalBmsEndpoint.nodeTypeName,
             endpointId: obj.id,
             name: obj.name,
+            directModificationDate: date, creationDate: date
         }, res);
         return { childId, res };
         // await SpinalGraphService.addChildInContext(
@@ -120,7 +125,8 @@ class Utilities {
     }
     static isLinked(items, id) {
         for (let index = 0; index < items.length; index++) {
-            const nodeId = items[index].getId().get();
+            const node = (0, ControlEndpoint_1.isLinkedDirectlyToGroup)(items[index]) ? items[index].node : items[index];
+            const nodeId = node.getId().get();
             if (nodeId === id)
                 return true;
         }

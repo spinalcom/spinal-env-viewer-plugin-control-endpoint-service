@@ -48,5 +48,5 @@ var ControlEndpointDataType;
     ControlEndpointDataType["String"] = "String";
     ControlEndpointDataType["Duration"] = "Duration";
     ControlEndpointDataType["Enum"] = "Enum";
-})(ControlEndpointDataType = exports.ControlEndpointDataType || (exports.ControlEndpointDataType = {}));
+})(ControlEndpointDataType || (exports.ControlEndpointDataType = ControlEndpointDataType = {}));
 //# sourceMappingURL=ControlEndpointDataType.js.map

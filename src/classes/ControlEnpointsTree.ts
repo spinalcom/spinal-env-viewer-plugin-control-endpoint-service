@@ -67,11 +67,7 @@ export default class ControlEnpointsTree {
    * @param  {string} iconName
    * @returns Promise
    */
-  public createCategory(
-    contextId: string,
-    categoryName: string,
-    iconName: string
-  ): Promise<SpinalNodeRef> {
+  public createCategory(contextId: string, categoryName: string, iconName: string): Promise<SpinalNodeRef> {
     return groupManagerService
       .addCategory(contextId, categoryName, iconName)
       .then((result) => {
@@ -99,12 +95,7 @@ export default class ControlEnpointsTree {
    * @param  {string} groupColor
    * @returns Promise
    */
-  public createGroup(
-    contextId: string,
-    categoryId: string,
-    groupName: string,
-    groupColor: string
-  ): Promise<SpinalNodeRef> {
+  public createGroup(contextId: string, categoryId: string, groupName: string, groupColor: string): Promise<SpinalNodeRef> {
     return groupManagerService
       .addGroup(contextId, categoryId, groupName, groupColor)
       .then((result) => {
@@ -155,13 +146,11 @@ export default class ControlEnpointsTree {
   public createControlPointProfil(
     contextId: string,
     groupId: string,
-    controlPointProfil: { name: string; endpoints: IControlEndpoint[] } = {
-      name: 'unknow',
-      endpoints: [],
-    }
+    controlPointProfil: { name: string; endpoints: IControlEndpoint[] } = { name: 'unknow', endpoints: [], }
   ): Promise<{ old_group: string; newGroup: string }> {
+    const date = Date.now()
     const profilNodeId = SpinalGraphService.createNode(
-      { name: controlPointProfil.name, type: CONTROL_POINT_TYPE },
+      { name: controlPointProfil.name, type: CONTROL_POINT_TYPE, directModificationDate : date, creationDate: date},
       new Lst(controlPointProfil.endpoints)
     );
     return groupManagerService.linkElementToGroup(

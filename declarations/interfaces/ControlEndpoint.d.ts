@@ -1,5 +1,7 @@
+import { SpinalNode } from 'spinal-env-viewer-graph-service';
 import { ControlEndpointDataType, ControlEndpointType } from '..';
 import { BoolConfigDataType, EnumConfigDataType, NumberConfigDataType } from '../dataTypes/ControlConfigDataType';
+import { Model } from 'spinal-core-connectorjs_type';
 export interface IControlEndpoint {
     id?: string;
     name: string;
@@ -15,7 +17,7 @@ export interface IControlEndpoint {
     isActive?: boolean;
     currentValue?: string | boolean | number;
 }
-export declare class IControlEndpointModel extends spinal.Model {
+export declare class IControlEndpointModel extends Model {
     id?: string;
     name: string;
     alias: string;
@@ -30,3 +32,8 @@ export declare class IControlEndpointModel extends spinal.Model {
     isActive?: boolean;
     currentValue?: string | boolean | number;
 }
+export declare class ILinkedToGroupRes extends Model {
+    linkedDirectlyToGroup: boolean;
+    node: SpinalNode<any>;
+}
+export declare const isLinkedDirectlyToGroup: (model: any) => model is ILinkedToGroupRes;

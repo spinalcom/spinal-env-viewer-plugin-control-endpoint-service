@@ -130,11 +130,9 @@ class ControlEnpointsTree {
      * @param  {any} controlPointProfil
      * @returns Promise of new groupId and old groupId
      */
-    createControlPointProfil(contextId, groupId, controlPointProfil = {
-        name: 'unknow',
-        endpoints: [],
-    }) {
-        const profilNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({ name: controlPointProfil.name, type: contants_1.CONTROL_POINT_TYPE }, new spinal_core_connectorjs_type_1.Lst(controlPointProfil.endpoints));
+    createControlPointProfil(contextId, groupId, controlPointProfil = { name: 'unknow', endpoints: [], }) {
+        const date = Date.now();
+        const profilNodeId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({ name: controlPointProfil.name, type: contants_1.CONTROL_POINT_TYPE, directModificationDate: date, creationDate: date }, new spinal_core_connectorjs_type_1.Lst(controlPointProfil.endpoints));
         return spinal_env_viewer_plugin_group_manager_service_1.groupManagerService.linkElementToGroup(contextId, groupId, profilNodeId);
     }
 }

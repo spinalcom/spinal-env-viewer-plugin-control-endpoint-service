@@ -29,5 +29,5 @@ var CalculationRule;
     CalculationRule["Reference"] = "Reference";
     CalculationRule["Sum"] = "Sum";
     CalculationRule["Average"] = "Average";
-})(CalculationRule = exports.CalculationRule || (exports.CalculationRule = {}));
+})(CalculationRule || (exports.CalculationRule = CalculationRule = {}));
 //# sourceMappingURL=CalculationRulesDataType.js.map
