@@ -37,7 +37,7 @@ exports.ControlPointObj = Object.freeze({
     type: ControlEndpointType_1.ControlEndpointType.Temperature,
     command: 0,
     saveTimeSeries: 0,
-    config: (0, config_1.getConfig)(ControlEndpointDataType_1.ControlEndpointDataType.Float),
+    config: config_1.getConfig(ControlEndpointDataType_1.ControlEndpointDataType.Float),
     icon: 'device_thermostat',
     isActive: true,
 });
@@ -45,7 +45,7 @@ class SpinalControlPoint extends spinal_core_connectorjs_type_1.Model {
     constructor(controlPoint) {
         super();
         if (controlPoint) {
-            controlPoint.config = (0, config_1.getConfig)(controlPoint.dataType);
+            controlPoint.config = config_1.getConfig(controlPoint.dataType);
         }
         if (typeof controlPoint === 'undefined') {
             controlPoint = exports.ControlPointObj;
@@ -56,7 +56,7 @@ class SpinalControlPoint extends spinal_core_connectorjs_type_1.Model {
     bindDataType() {
         this.dataType.bind(() => {
             const type = this.dataType.get();
-            this.mod_attr('config', (0, config_1.getConfig)(type));
+            this.mod_attr('config', config_1.getConfig(type));
         });
     }
 }

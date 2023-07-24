@@ -260,6 +260,7 @@ export default class ControlEndpointService {
 
     return Promise.all(promises).then(async (result) => {
       await this.removeItemLinked(groupId, controlPointProfilId);
+      //@ts-ignore
       return result.flat();
     });
   }
@@ -472,6 +473,7 @@ export default class ControlEndpointService {
     const linkedProm = [this.getElementLinked(nodeId), SpinalGraphService.getChildren(nodeId, [ROOM_TO_CONTROL_GROUP])]
     
     return Promise.all(linkedProm).then((result) => {
+      //@ts-ignore
       const flatted = result.flat();
       const found = flatted.find(el => [el.id?.get(), el.referenceId?.get()].indexOf(profilId) !== -1);
       

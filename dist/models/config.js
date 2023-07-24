@@ -41,7 +41,7 @@ exports.NumberConfig = {
     max: { value: 30, color: '#008000' },
     calculation_rule: CalculationRulesDataType_1.CalculationRule.Reference,
 };
-const getConfig = function (dataType) {
+exports.getConfig = function (dataType) {
     switch (dataType) {
         case ControlEndpointDataType_1.ControlEndpointDataType.Boolean:
             return exports.BoolConfig;
@@ -56,5 +56,4 @@ const getConfig = function (dataType) {
             return exports.NumberConfig;
     }
 };
-exports.getConfig = getConfig;
 //# sourceMappingURL=config.js.map

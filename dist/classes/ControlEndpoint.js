@@ -176,7 +176,7 @@ class ControlEndpointService {
             const items = [];
             for (let index = 0; index < res.length; index++) {
                 const element = res[index];
-                const node = (0, ControlEndpoint_1.isLinkedDirectlyToGroup)(element) ? element.node : element;
+                const node = ControlEndpoint_1.isLinkedDirectlyToGroup(element) ? element.node : element;
                 spinal_env_viewer_graph_service_1.SpinalGraphService._addNode(node);
                 items.push(spinal_env_viewer_graph_service_1.SpinalGraphService.getInfo(node.getId().get()));
             }
@@ -240,6 +240,7 @@ class ControlEndpointService {
             }));
             return Promise.all(promises).then((result) => __awaiter(this, void 0, void 0, function* () {
                 yield this.removeItemLinked(groupId, controlPointProfilId);
+                //@ts-ignore
                 return result.flat();
             }));
         });
@@ -425,6 +426,7 @@ class ControlEndpointService {
         return __awaiter(this, void 0, void 0, function* () {
             const linkedProm = [this.getElementLinked(nodeId), spinal_env_viewer_graph_service_1.SpinalGraphService.getChildren(nodeId, [contants_1.ROOM_TO_CONTROL_GROUP])];
             return Promise.all(linkedProm).then((result) => {
+                //@ts-ignore
                 const flatted = result.flat();
                 const found = flatted.find(el => { var _a, _b; return [(_a = el.id) === null || _a === void 0 ? void 0 : _a.get(), (_b = el.referenceId) === null || _b === void 0 ? void 0 : _b.get()].indexOf(profilId) !== -1; });
                 return found ? true : false;
@@ -497,7 +499,7 @@ class ControlEndpointService {
             let items = yield this.loadElementLinked(profileOrGroupId);
             for (let index = 0; index < items.length; index++) {
                 const element = items[index];
-                const node = (0, ControlEndpoint_1.isLinkedDirectlyToGroup)(element) ? element.node : element;
+                const node = ControlEndpoint_1.isLinkedDirectlyToGroup(element) ? element.node : element;
                 if (node.getId().get() === idOfItemToremove) {
                     items.splice(index);
                     return true;

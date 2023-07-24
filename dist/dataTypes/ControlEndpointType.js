@@ -35,5 +35,5 @@ var ControlEndpointType;
     ControlEndpointType["Other"] = "Other";
     ControlEndpointType["Consigne"] = "Consigne";
     ControlEndpointType["co2"] = "co2";
-})(ControlEndpointType || (exports.ControlEndpointType = ControlEndpointType = {}));
+})(ControlEndpointType = exports.ControlEndpointType || (exports.ControlEndpointType = {}));
 //# sourceMappingURL=ControlEndpointType.js.map

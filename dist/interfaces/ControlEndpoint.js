@@ -46,8 +46,7 @@ exports.IControlEndpointModel = IControlEndpointModel;
 class ILinkedToGroupRes extends spinal_core_connectorjs_type_1.Model {
 }
 exports.ILinkedToGroupRes = ILinkedToGroupRes;
-const isLinkedDirectlyToGroup = (model) => {
+exports.isLinkedDirectlyToGroup = (model) => {
     return model.linkedDirectlyToGroup;
 };
-exports.isLinkedDirectlyToGroup = isLinkedDirectlyToGroup;
 //# sourceMappingURL=ControlEndpoint.js.map

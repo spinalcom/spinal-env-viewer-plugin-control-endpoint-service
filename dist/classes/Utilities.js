@@ -90,7 +90,6 @@ class Utilities {
             command: obj.command,
             saveTimeSeries: obj.saveTimeSeries,
             isActive: (obj === null || obj === void 0 ? void 0 : obj.isActive) || true,
-            // config: obj.config
         });
         const date = Date.now();
         const childId = spinal_env_viewer_graph_service_1.SpinalGraphService.createNode({
@@ -125,7 +124,7 @@ class Utilities {
     }
     static isLinked(items, id) {
         for (let index = 0; index < items.length; index++) {
-            const node = (0, ControlEndpoint_1.isLinkedDirectlyToGroup)(items[index]) ? items[index].node : items[index];
+            const node = ControlEndpoint_1.isLinkedDirectlyToGroup(items[index]) ? items[index].node : items[index];
             const nodeId = node.getId().get();
             if (nodeId === id)
                 return true;
